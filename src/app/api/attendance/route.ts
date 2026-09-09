@@ -98,25 +98,28 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    const startTime = settings.attendance_start_time?.substring(0, 5) || '05:00';
+    const endTime = settings.attendance_end_time?.substring(0, 5) || '13:00';
+
     // 3. Check start time
-    if (compareHHMM(mTime.hhmm, settings.attendance_start_time) < 0) {
+    if (compareHHMM(mTime.hhmm, startTime) < 0) {
       return NextResponse.json(
         {
           success: false,
           code: 'ATTENDANCE_NOT_OPEN',
-          message: `Absensi belum dibuka. Absensi dapat dilakukan mulai pukul ${settings.attendance_start_time}.`,
+          message: `Absensi belum dibuka. Absensi dapat dilakukan mulai pukul ${startTime}.`,
         },
         { status: 400 }
       );
     }
 
     // 4. Check end time
-    if (compareHHMM(mTime.hhmm, settings.attendance_end_time) > 0) {
+    if (compareHHMM(mTime.hhmm, endTime) > 0) {
       return NextResponse.json(
         {
           success: false,
           code: 'ATTENDANCE_CLOSED',
-          message: `Waktu absen sudah berakhir. Absensi hari ini ditutup pukul ${settings.attendance_end_time}. Silakan ajukan izin.`,
+          message: `Waktu absen sudah berakhir. Absensi hari ini ditutup pukul ${endTime}. Silakan ajukan izin.`,
         },
         { status: 400 }
       );

@@ -598,32 +598,9 @@ export const db = {
   },
 
   /**
-   * Fetch Settings — uses in-memory cache first, then Google Sheets fallback
+   * Fetch Settings — ALWAYS tries Google Sheets first if available to get actual persistent settings
    */
   async getSettings(): Promise<AppSettings> {
-    // 1. Prefer in-memory cached settings (survives within same serverless invocation)
-    if (memoryDbCache && Object.keys(memoryDbCache.settings).length > 0) {
-      const s = memoryDbCache.settings;
-      return {
-        company_name: s.company_name ?? DEFAULT_SETTINGS.company_name,
-        timezone: s.timezone ?? DEFAULT_SETTINGS.timezone,
-        attendance_enabled: s.attendance_enabled === 'true',
-        attendance_start_time: s.attendance_start_time ?? DEFAULT_SETTINGS.attendance_start_time,
-        attendance_end_time: s.attendance_end_time ?? DEFAULT_SETTINGS.attendance_end_time,
-        require_gps: s.require_gps === 'true',
-        leave_enabled: s.leave_enabled === 'true',
-        leave_reason_required: s.leave_reason_required === 'true',
-        monday_enabled: s.monday_enabled !== 'false',
-        tuesday_enabled: s.tuesday_enabled !== 'false',
-        wednesday_enabled: s.wednesday_enabled !== 'false',
-        thursday_enabled: s.thursday_enabled !== 'false',
-        friday_enabled: s.friday_enabled !== 'false',
-        saturday_enabled: s.saturday_enabled !== 'false',
-        sunday_enabled: s.sunday_enabled === 'true',
-      };
-    }
-
-    // 2. Try Google Sheets
     const client = getGoogleSheetsClient();
     let rawSettings: Record<string, string> = {};
 
@@ -642,15 +619,18 @@ export const db = {
       }
     }
 
-    // 3. Fallback: local/memory DB
-    if (Object.keys(rawSettings).length === 0) {
+    // If Google Sheets gave us settings, cache in memoryDbCache
+    if (Object.keys(rawSettings).length > 0) {
+      if (!memoryDbCache) {
+        const localData = await ensureLocalDb();
+        localData.settings = rawSettings;
+      } else {
+        memoryDbCache.settings = rawSettings;
+      }
+    } else {
+      // Fallback: local/memory DB
       const localData = await ensureLocalDb();
       rawSettings = localData.settings;
-    } else {
-      // Update in-memory cache with what we read from Sheets so subsequent calls are fast
-      const localData = await ensureLocalDb();
-      localData.settings = rawSettings;
-      memoryDbCache = localData;
     }
 
     return {
