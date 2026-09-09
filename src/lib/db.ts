@@ -29,6 +29,28 @@ function toBool(val: unknown, defaultVal = false): boolean {
   return s === 'true' || s === '1' || s === 'yes' || s === 'y' || s === 't';
 }
 
+function sanitizeTime(val: unknown, defaultVal = '05:00:00'): string {
+  if (!val) return defaultVal;
+  const str = String(val).trim();
+  const match = str.match(/(\d{1,2}):(\d{2})/);
+  if (match) {
+    let hh = match[1];
+    const mm = match[2];
+    const isPM = str.toLowerCase().includes('pm');
+    const isAM = str.toLowerCase().includes('am');
+    
+    if (isPM && hh !== '12') {
+      hh = String(parseInt(hh, 10) + 12);
+    } else if (isAM && hh === '12') {
+      hh = '00';
+    }
+    
+    if (hh.length === 1) hh = '0' + hh;
+    return `${hh}:${mm}:00`;
+  }
+  return str;
+}
+
 // Initial Seed Users (PIN for all: 123456)
 // Generated bcrypt hash for "123456"
 const DEFAULT_PIN_HASH = '$2a$10$r9ZfFhA6E6f5S5c.pU2s7eO0S0I0d4x9Y8Z7A6B5C4D3E2F1G0H1I'; // bcrypt hash for 123456
@@ -643,8 +665,8 @@ export const db = {
       company_name: rawSettings.company_name ?? DEFAULT_SETTINGS.company_name,
       timezone: rawSettings.timezone ?? DEFAULT_SETTINGS.timezone,
       attendance_enabled: toBool(rawSettings.attendance_enabled, DEFAULT_SETTINGS.attendance_enabled),
-      attendance_start_time: rawSettings.attendance_start_time ?? DEFAULT_SETTINGS.attendance_start_time,
-      attendance_end_time: rawSettings.attendance_end_time ?? DEFAULT_SETTINGS.attendance_end_time,
+      attendance_start_time: sanitizeTime(rawSettings.attendance_start_time, DEFAULT_SETTINGS.attendance_start_time),
+      attendance_end_time: sanitizeTime(rawSettings.attendance_end_time, DEFAULT_SETTINGS.attendance_end_time),
       require_gps: toBool(rawSettings.require_gps, DEFAULT_SETTINGS.require_gps),
       leave_enabled: toBool(rawSettings.leave_enabled, DEFAULT_SETTINGS.leave_enabled),
       leave_reason_required: toBool(rawSettings.leave_reason_required, DEFAULT_SETTINGS.leave_reason_required),
@@ -694,7 +716,7 @@ export const db = {
         await client.sheets.spreadsheets.values.update({
           spreadsheetId: client.spreadsheetId,
           range: 'Settings!A2:B',
-          valueInputOption: 'USER_ENTERED',
+          valueInputOption: 'RAW',
           requestBody: { values },
         });
         console.log('Settings synced to Google Sheets successfully');
