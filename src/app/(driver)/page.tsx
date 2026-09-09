@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import React, { useEffect, useState, useCallback } from 'react';
 import Link from 'next/link';
@@ -211,10 +211,10 @@ export default function DriverHomePage() {
         {/* STATE 6 — IZIN DISETUJUI */}
         {stateNum === 6 && (
           <div className="space-y-4 py-4">
-            <div className="w-20 h-20 rounded-full bg-orange-500/20 text-orange-400 border border-orange-500/40 flex items-center justify-center mx-auto shadow-lg shadow-orange-500/10 animate-pulse">
+            <div className="w-20 h-20 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 flex items-center justify-center mx-auto shadow-lg shadow-emerald-500/10 animate-pulse">
               <CheckCircle2 size={48} />
             </div>
-            <h3 className="text-xl font-bold text-orange-400">✓ IZIN DISETUJUI</h3>
+            <h3 className="text-xl font-bold text-emerald-400">✓ IZIN DISETUJUI</h3>
             <p className="text-sm text-slate-300 max-w-xs mx-auto leading-relaxed">
               Pengajuan izin Anda hari ini telah disetujui. Anda tidak perlu melakukan absensi hari ini.
             </p>

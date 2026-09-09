@@ -1,4 +1,4 @@
-﻿import React from 'react';
+import React from 'react';
 
 type BadgeType = 'role' | 'leave' | 'attendance_source' | 'status';
 
@@ -13,49 +13,49 @@ export default function StatusBadge({ type, value }: Props) {
   if (type === 'role') {
     switch (value) {
       case 'ADMIN':
-        color = 'bg-purple-100 text-purple-700 font-semibold';
+        color = 'bg-purple-950/80 text-purple-300 border border-purple-800/50 font-semibold';
         break;
       case 'SUPERVISOR':
-        color = 'bg-blue-100 text-blue-700 font-semibold';
+        color = 'bg-blue-950/80 text-blue-300 border border-blue-800/50 font-semibold';
         break;
       case 'DRIVER':
-        color = 'bg-orange-100 text-orange-700 font-semibold';
+        color = 'bg-orange-950/80 text-orange-300 border border-orange-800/50 font-semibold';
         break;
     }
   } else if (type === 'leave') {
     switch (value) {
       case 'PENDING':
-        color = 'bg-amber-100 text-amber-800 border border-amber-300';
+        color = 'bg-amber-950/80 text-amber-300 border border-amber-800/60 font-semibold';
         break;
       case 'APPROVED':
-        color = 'bg-orange-100 text-orange-800 border border-orange-300';
+        color = 'bg-emerald-950/80 text-emerald-400 border border-emerald-800/60 font-semibold';
         break;
       case 'REJECTED':
-        color = 'bg-rose-100 text-rose-800 border border-rose-300';
+        color = 'bg-rose-950/80 text-rose-400 border border-rose-800/60 font-semibold';
         break;
     }
   } else if (type === 'attendance_source') {
     switch (value) {
       case 'DRIVER':
-        color = 'bg-orange-50 text-orange-600 border border-orange-200';
+        color = 'bg-orange-950/80 text-orange-300 border border-orange-800/50';
         break;
       case 'ADMIN':
-        color = 'bg-indigo-50 text-indigo-600 border border-indigo-200';
+        color = 'bg-indigo-950/80 text-indigo-300 border border-indigo-800/50';
         break;
     }
   } else if (type === 'status') {
     switch (value) {
       case 'ACTIVE':
-        color = 'bg-orange-100 text-orange-700';
+        color = 'bg-emerald-950/80 text-emerald-400 border border-emerald-800/50 font-semibold';
         break;
       case 'INACTIVE':
-        color = 'bg-rose-100 text-rose-700';
+        color = 'bg-rose-950/80 text-rose-400 border border-rose-800/50 font-semibold';
         break;
     }
   }
 
   return (
-    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${color}`}>
+    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs ${color}`}>
       {value}
     </span>
   );

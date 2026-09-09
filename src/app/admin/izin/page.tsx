@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import React, { useEffect, useState, useCallback } from 'react';
 import { Check, X, Trash2, RefreshCw } from 'lucide-react';
@@ -146,7 +146,7 @@ export default function AdminLeavePage() {
                 </p>
                 {req.reason && <p className="text-xs text-slate-400 italic">Alasan: &ldquo;{req.reason}&rdquo;</p>}
                 {req.approved_by && (
-                  <p className="text-[11px] text-orange-400 font-medium">
+                  <p className="text-[11px] text-emerald-400 font-medium">
                     Disetujui oleh: {req.approved_by}
                   </p>
                 )}
@@ -163,7 +163,7 @@ export default function AdminLeavePage() {
                     <button
                       onClick={() => handleAction(req.id, 'APPROVE')}
                       disabled={actionId === req.id}
-                      className="px-3.5 py-2 bg-orange-600 hover:bg-orange-500 text-white font-bold text-xs rounded-xl transition flex items-center gap-1 disabled:opacity-50"
+                      className="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs rounded-xl transition flex items-center gap-1 disabled:opacity-50"
                     >
                       <Check size={16} />
                       <span>SETUJUI</span>

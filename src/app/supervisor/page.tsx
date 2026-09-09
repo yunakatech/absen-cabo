@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import React, { useEffect, useState, useCallback } from 'react';
 import Link from 'next/link';
@@ -171,7 +171,7 @@ export default function SupervisorDashboard() {
 
         {pendingRequests.length === 0 ? (
           <div className="text-center py-8 text-slate-500">
-            <CheckCircle2 size={36} className="mx-auto text-orange-500/60 mb-2" />
+            <CheckCircle2 size={36} className="mx-auto text-emerald-500/60 mb-2" />
             <p className="text-sm font-medium">Tidak ada pengajuan izin yang menggantung.</p>
           </div>
         ) : (
@@ -201,7 +201,7 @@ export default function SupervisorDashboard() {
                   <button
                     onClick={() => handleApproveReject(req.id, 'APPROVE')}
                     disabled={actionId === req.id}
-                    className="flex-1 sm:flex-initial px-4 py-2.5 bg-orange-600 hover:bg-orange-500 text-white font-bold text-xs rounded-xl shadow-md transition flex items-center justify-center gap-1.5 disabled:opacity-50"
+                    className="flex-1 sm:flex-initial px-4 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs rounded-xl shadow-md transition flex items-center justify-center gap-1.5 disabled:opacity-50"
                   >
                     <Check size={16} />
                     <span>SETUJUI</span>
