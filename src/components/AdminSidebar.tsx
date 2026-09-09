@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
@@ -14,9 +14,11 @@ import {
   Truck,
   Menu,
   X,
+  KeyRound,
 } from 'lucide-react';
 import { useState } from 'react';
 import toast from 'react-hot-toast';
+import ChangePinModal from './ChangePinModal';
 
 interface Props {
   userName?: string;
@@ -26,6 +28,7 @@ export default function AdminSidebar({ userName = 'Admin' }: Props) {
   const pathname = usePathname();
   const router = useRouter();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [isChangePinOpen, setIsChangePinOpen] = useState(false);
 
   const menuItems = [
     { href: '/admin', label: 'Dashboard', icon: LayoutDashboard },
@@ -56,12 +59,21 @@ export default function AdminSidebar({ userName = 'Admin' }: Props) {
           <img src="/logo.svg" alt="Absen Cabo Logo" className="w-8 h-8 rounded-lg object-contain bg-slate-800 p-0.5" />
           <span className="font-bold text-base tracking-wide">Absen Cabo</span>
         </div>
-        <button
-          onClick={() => setMobileOpen(!mobileOpen)}
-          className="p-2 text-slate-300 hover:text-white rounded-lg focus:outline-none"
-        >
-          {mobileOpen ? <X size={24} /> : <Menu size={24} />}
-        </button>
+        <div className="flex items-center gap-1">
+          <button
+            onClick={() => setIsChangePinOpen(true)}
+            title="Ubah PIN Keamanan"
+            className="p-2 text-slate-300 hover:text-orange-400 rounded-lg focus:outline-none"
+          >
+            <KeyRound size={20} />
+          </button>
+          <button
+            onClick={() => setMobileOpen(!mobileOpen)}
+            className="p-2 text-slate-300 hover:text-white rounded-lg focus:outline-none"
+          >
+            {mobileOpen ? <X size={24} /> : <Menu size={24} />}
+          </button>
+        </div>
       </div>
 
       {/* Backdrop for mobile */}
@@ -126,16 +138,30 @@ export default function AdminSidebar({ userName = 'Admin' }: Props) {
               </div>
             </div>
 
-            <button
-              onClick={handleLogout}
-              title="Logout"
-              className="p-2 text-slate-400 hover:text-rose-400 rounded-lg transition hover:bg-slate-700/50"
-            >
-              <LogOut size={18} />
-            </button>
+            <div className="flex items-center gap-1">
+              <button
+                onClick={() => setIsChangePinOpen(true)}
+                title="Ubah PIN Keamanan"
+                className="p-2 text-slate-400 hover:text-orange-400 rounded-lg transition hover:bg-slate-700/50"
+              >
+                <KeyRound size={17} />
+              </button>
+              <button
+                onClick={handleLogout}
+                title="Logout"
+                className="p-2 text-slate-400 hover:text-rose-400 rounded-lg transition hover:bg-slate-700/50"
+              >
+                <LogOut size={17} />
+              </button>
+            </div>
           </div>
         </div>
       </aside>
+
+      <ChangePinModal
+        isOpen={isChangePinOpen}
+        onClose={() => setIsChangePinOpen(false)}
+      />
     </>
   );
 }
