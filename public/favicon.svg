@@ -1,10 +1,12 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
-  <rect x="5" y="5" width="90" height="90" rx="20" fill="#10b981"/>
-  <circle cx="50" cy="50" r="30" fill="none" stroke="#ffffff" stroke-width="6"/>
-  <circle cx="50" cy="50" r="8" fill="#ffffff"/>
-  <path d="M50 25 L50 42" stroke="#ffffff" stroke-width="5" stroke-linecap="round"/>
-  <path d="M28 58 L43 51" stroke="#ffffff" stroke-width="5" stroke-linecap="round"/>
-  <path d="M72 58 L57 51" stroke="#ffffff" stroke-width="5" stroke-linecap="round"/>
-  <circle cx="75" cy="75" r="16" fill="#0f172a"/>
-  <path d="M68 75 L73 80 L82 70" fill="none" stroke="#10b981" stroke-width="4" stroke-linecap="round"/>
+  <rect x="5" y="5" width="90" height="90" rx="20" fill="#f97316"/>
+  <circle cx="50" cy="48" r="26" fill="none" stroke="#ffffff" stroke-width="5.5"/>
+  <circle cx="50" cy="48" r="7" fill="#ffffff"/>
+  <!-- Spokes -->
+  <line x1="50" y1="26" x2="50" y2="42" stroke="#ffffff" stroke-width="5" stroke-linecap="round"/>
+  <line x1="27" y1="55" x2="40" y2="49" stroke="#ffffff" stroke-width="5" stroke-linecap="round"/>
+  <line x1="73" y1="55" x2="60" y2="49" stroke="#ffffff" stroke-width="5" stroke-linecap="round"/>
+  <!-- Check badge -->
+  <circle cx="72" cy="74" r="15" fill="#0f172a"/>
+  <path d="M64 74 L70 80 L80 67" fill="none" stroke="#f97316" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
 </svg>

@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import React, { useEffect, useState, useCallback } from 'react';
 import { ShieldAlert, RefreshCw, Search } from 'lucide-react';
@@ -119,7 +119,7 @@ export default function AdminAuditLogPage() {
                       </span>
                     </td>
                     <td className="px-6 py-4">
-                      <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-slate-800 border border-slate-700 text-emerald-400">
+                      <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-slate-800 border border-slate-700 text-orange-400">
                         {log.action}
                       </span>
                     </td>

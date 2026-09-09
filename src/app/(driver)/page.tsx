@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import React, { useEffect, useState, useCallback } from 'react';
 import Link from 'next/link';
@@ -160,7 +160,7 @@ export default function DriverHomePage() {
   if (loading) {
     return (
       <div className="flex-1 flex flex-col items-center justify-center py-20 text-slate-400 gap-3">
-        <div className="w-10 h-10 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin" />
+        <div className="w-10 h-10 border-4 border-orange-500 border-t-transparent rounded-full animate-spin" />
         <p className="text-sm font-medium">Memuat data absensi...</p>
       </div>
     );
@@ -194,14 +194,14 @@ export default function DriverHomePage() {
     <div className="flex-1 flex flex-col justify-between space-y-6">
       {/* Header Info */}
       <div className="text-center pt-2">
-        <p className="text-xs uppercase font-bold tracking-widest text-emerald-400 mb-1">
+        <p className="text-xs uppercase font-bold tracking-widest text-orange-400 mb-1">
           {greeting}
         </p>
         <h2 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
           {user?.name || 'Pak Driver'}
         </h2>
         <div className="inline-flex items-center gap-2 mt-3 px-4 py-1.5 bg-slate-900 border border-slate-800 rounded-full text-xs font-semibold text-slate-300">
-          <Calendar size={14} className="text-emerald-400" />
+          <Calendar size={14} className="text-orange-400" />
           <span>{serverTime?.formattedFull || 'Selasa, 8 September 2026'}</span>
         </div>
       </div>
@@ -211,10 +211,10 @@ export default function DriverHomePage() {
         {/* STATE 6 — IZIN DISETUJUI */}
         {stateNum === 6 && (
           <div className="space-y-4 py-4">
-            <div className="w-20 h-20 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 flex items-center justify-center mx-auto shadow-lg shadow-emerald-500/10 animate-pulse">
+            <div className="w-20 h-20 rounded-full bg-orange-500/20 text-orange-400 border border-orange-500/40 flex items-center justify-center mx-auto shadow-lg shadow-orange-500/10 animate-pulse">
               <CheckCircle2 size={48} />
             </div>
-            <h3 className="text-xl font-bold text-emerald-400">✓ IZIN DISETUJUI</h3>
+            <h3 className="text-xl font-bold text-orange-400">✓ IZIN DISETUJUI</h3>
             <p className="text-sm text-slate-300 max-w-xs mx-auto leading-relaxed">
               Pengajuan izin Anda hari ini telah disetujui. Anda tidak perlu melakukan absensi hari ini.
             </p>
@@ -224,12 +224,12 @@ export default function DriverHomePage() {
         {/* STATE 3 — SUDAH ABSEN */}
         {stateNum === 3 && (
           <div className="space-y-4 py-4">
-            <div className="w-20 h-20 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 flex items-center justify-center mx-auto shadow-lg shadow-emerald-500/10">
+            <div className="w-20 h-20 rounded-full bg-orange-500/20 text-orange-400 border border-orange-500/40 flex items-center justify-center mx-auto shadow-lg shadow-orange-500/10">
               <CheckCircle2 size={48} />
             </div>
-            <h3 className="text-xl font-bold text-emerald-400">✓ SUDAH ABSEN HARI INI</h3>
-            <div className="inline-flex items-center gap-2 px-5 py-2 bg-emerald-950/60 border border-emerald-800/60 rounded-2xl text-2xl font-extrabold text-emerald-300 tracking-wider">
-              <Clock size={22} className="text-emerald-400" />
+            <h3 className="text-xl font-bold text-orange-400">✓ SUDAH ABSEN HARI INI</h3>
+            <div className="inline-flex items-center gap-2 px-5 py-2 bg-orange-950/60 border border-orange-800/60 rounded-2xl text-2xl font-extrabold text-orange-300 tracking-wider">
+              <Clock size={22} className="text-orange-400" />
               <span>{todayAttendance?.attendance_time.substring(0, 5) || serverTime?.hhmm}</span>
             </div>
             <p className="text-xs text-slate-400">
@@ -272,7 +272,7 @@ export default function DriverHomePage() {
             <div>
               <p className="text-sm font-semibold text-slate-300 mb-1">Anda belum absen hari ini</p>
               <p className="text-xs text-slate-400 flex items-center justify-center gap-1">
-                <Clock size={14} className="text-emerald-400" />
+                <Clock size={14} className="text-orange-400" />
                 <span>Batas absen pukul <strong>{endTime}</strong></span>
               </p>
             </div>
@@ -281,7 +281,7 @@ export default function DriverHomePage() {
             <button
               onClick={handleAbsen}
               disabled={submitting}
-              className="w-full py-7 bg-gradient-to-r from-emerald-500 via-teal-500 to-emerald-600 hover:from-emerald-400 hover:to-teal-400 text-white font-black rounded-3xl shadow-2xl shadow-emerald-500/40 flex flex-col items-center justify-center gap-2 transform active:scale-95 transition-all disabled:opacity-50"
+              className="w-full py-7 bg-gradient-to-r from-orange-500 via-orange-500 to-orange-600 hover:from-orange-400 hover:to-orange-400 text-white font-black rounded-3xl shadow-2xl shadow-orange-500/40 flex flex-col items-center justify-center gap-2 transform active:scale-95 transition-all disabled:opacity-50"
             >
               {submitting ? (
                 <span className="flex items-center gap-2 text-xl">

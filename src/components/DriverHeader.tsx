@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
@@ -31,7 +31,7 @@ export default function DriverHeader({ userName = 'Pak Driver' }: Props) {
           <img src="/logo.svg" alt="Absen Cabo Logo" className="w-8 h-8 rounded-lg object-contain bg-slate-800 p-0.5 shadow-md border border-slate-700/50" />
           <div>
             <span className="font-bold text-sm text-white block leading-tight">Absen Cabo</span>
-            <span className="text-[10px] text-emerald-400 font-medium">{userName}</span>
+            <span className="text-[10px] text-orange-400 font-medium">{userName}</span>
           </div>
         </Link>
 

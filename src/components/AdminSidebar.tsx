@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
@@ -81,7 +81,7 @@ export default function AdminSidebar({ userName = 'Admin' }: Props) {
         <div>
           {/* Header */}
           <div className="p-6 border-b border-slate-800 flex items-center gap-3">
-            <img src="/logo.svg" alt="Absen Cabo Logo" className="w-10 h-10 rounded-xl object-contain bg-slate-800/80 p-1 shadow-lg shadow-emerald-900/20 border border-slate-700/50" />
+            <img src="/logo.svg" alt="Absen Cabo Logo" className="w-10 h-10 rounded-xl object-contain bg-slate-800/80 p-1 shadow-lg shadow-orange-900/20 border border-slate-700/50" />
             <div>
               <h1 className="font-bold text-lg leading-tight tracking-wide text-white">Absen Cabo</h1>
               <p className="text-xs text-slate-400">Admin Control Panel</p>
@@ -101,11 +101,11 @@ export default function AdminSidebar({ userName = 'Admin' }: Props) {
                   onClick={() => setMobileOpen(false)}
                   className={`flex items-center gap-3.5 px-4 py-3 rounded-xl text-sm font-medium transition-all ${
                     isActive
-                      ? 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 font-semibold shadow-sm'
+                      ? 'bg-orange-500/15 text-orange-400 border border-orange-500/30 font-semibold shadow-sm'
                       : 'text-slate-400 hover:bg-slate-800/80 hover:text-slate-200'
                   }`}
                 >
-                  <Icon size={19} className={isActive ? 'text-emerald-400' : 'text-slate-400'} />
+                  <Icon size={19} className={isActive ? 'text-orange-400' : 'text-slate-400'} />
                   <span>{item.label}</span>
                 </Link>
               );
@@ -122,7 +122,7 @@ export default function AdminSidebar({ userName = 'Admin' }: Props) {
               </div>
               <div className="truncate">
                 <p className="text-xs font-semibold text-slate-200 truncate">{userName}</p>
-                <p className="text-[10px] text-emerald-400 font-medium">Administrator</p>
+                <p className="text-[10px] text-orange-400 font-medium">Administrator</p>
               </div>
             </div>
 

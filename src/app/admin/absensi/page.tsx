@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import React, { useEffect, useState, useCallback } from 'react';
 import { Plus, Edit2, Trash2, MapPin, Search, RefreshCw, Download } from 'lucide-react';
@@ -267,7 +267,7 @@ export default function AdminAttendancePage() {
         <div className="flex items-center gap-3">
           <button
             onClick={handleExportCSV}
-            className="px-4 py-2.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-emerald-400 font-bold text-sm rounded-xl shadow-md flex items-center justify-center gap-2 transition"
+            className="px-4 py-2.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-orange-400 font-bold text-sm rounded-xl shadow-md flex items-center justify-center gap-2 transition"
           >
             <Download size={18} />
             <span>EXPORT CSV</span>
@@ -275,7 +275,7 @@ export default function AdminAttendancePage() {
 
           <button
             onClick={openAddModal}
-            className="px-4 py-2.5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-sm rounded-xl shadow-lg shadow-emerald-500/20 flex items-center justify-center gap-2 transition"
+            className="px-4 py-2.5 bg-orange-500 hover:bg-orange-400 text-slate-950 font-bold text-sm rounded-xl shadow-lg shadow-orange-500/20 flex items-center justify-center gap-2 transition"
           >
             <Plus size={18} />
             <span>+ ABSENSI MANUAL</span>
@@ -299,7 +299,7 @@ export default function AdminAttendancePage() {
           {filterDate && (
             <button
               onClick={() => setFilterDate('')}
-              className="ml-2 text-xs text-emerald-400 font-semibold"
+              className="ml-2 text-xs text-orange-400 font-semibold"
             >
               Reset
             </button>
@@ -380,7 +380,7 @@ export default function AdminAttendancePage() {
                   <tr key={item.id} className="hover:bg-slate-800/40 transition">
                     <td className="px-6 py-4">
                       <p className="font-bold text-white">{formatIndonesianDate(item.attendance_date)}</p>
-                      <p className="text-xs text-emerald-400 font-mono font-semibold">
+                      <p className="text-xs text-orange-400 font-mono font-semibold">
                         Pukul {item.attendance_time.substring(0, 5)} WITA
                       </p>
                     </td>
@@ -395,7 +395,7 @@ export default function AdminAttendancePage() {
                           href={`https://www.google.com/maps?q=${item.latitude},${item.longitude}`}
                           target="_blank"
                           rel="noreferrer"
-                          className="inline-flex items-center gap-1 text-emerald-400 hover:underline font-mono"
+                          className="inline-flex items-center gap-1 text-orange-400 hover:underline font-mono"
                         >
                           <MapPin size={14} />
                           <span>
@@ -512,7 +512,7 @@ export default function AdminAttendancePage() {
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="px-5 py-2.5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-sm rounded-xl shadow-md disabled:opacity-50"
+                  className="px-5 py-2.5 bg-orange-500 hover:bg-orange-400 text-slate-950 font-bold text-sm rounded-xl shadow-md disabled:opacity-50"
                 >
                   {submitting ? 'Memproses...' : 'SIMPAN'}
                 </button>

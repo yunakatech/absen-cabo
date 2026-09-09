@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
@@ -66,8 +66,8 @@ export default function LoginPage() {
   return (
     <main className="min-h-screen bg-slate-950 flex flex-col justify-center items-center p-4 relative overflow-hidden">
       {/* Background Decorative Gradients */}
-      <div className="absolute top-[-10%] left-[-10%] w-[450px] h-[450px] bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute bottom-[-10%] right-[-10%] w-[450px] h-[450px] bg-teal-500/10 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute top-[-10%] left-[-10%] w-[450px] h-[450px] bg-orange-500/10 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute bottom-[-10%] right-[-10%] w-[450px] h-[450px] bg-orange-500/10 rounded-full blur-3xl pointer-events-none" />
 
       <div className="w-full max-w-md bg-slate-900/90 border border-slate-800 rounded-3xl p-6 sm:p-8 shadow-2xl backdrop-blur-xl relative z-10">
         {/* Header Branding */}
@@ -75,7 +75,7 @@ export default function LoginPage() {
           <img
             src="/logo.svg"
             alt="Absen Cabo Logo"
-            className="w-20 h-20 mx-auto mb-3 object-contain bg-slate-800/80 p-2 rounded-3xl shadow-xl shadow-emerald-500/10 border border-slate-700/60"
+            className="w-20 h-20 mx-auto mb-3 object-contain bg-slate-800/80 p-2 rounded-3xl shadow-xl shadow-orange-500/10 border border-slate-700/60"
           />
           <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
             Absen Cabo
@@ -99,7 +99,7 @@ export default function LoginPage() {
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
                 placeholder="Contoh: 08133333333"
-                className="w-full pl-11 pr-4 py-3.5 bg-slate-800/80 border border-slate-700 rounded-2xl text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-base tracking-wide transition"
+                className="w-full pl-11 pr-4 py-3.5 bg-slate-800/80 border border-slate-700 rounded-2xl text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent text-base tracking-wide transition"
                 required
               />
             </div>
@@ -120,7 +120,7 @@ export default function LoginPage() {
                 onChange={(e) => setPin(e.target.value)}
                 placeholder="••••••"
                 maxLength={6}
-                className="w-full pl-11 pr-12 py-3.5 bg-slate-800/80 border border-slate-700 rounded-2xl text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-lg tracking-widest transition"
+                className="w-full pl-11 pr-12 py-3.5 bg-slate-800/80 border border-slate-700 rounded-2xl text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent text-lg tracking-widest transition"
                 required
               />
               <button
@@ -137,7 +137,7 @@ export default function LoginPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full mt-2 py-4 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-white font-bold rounded-2xl shadow-lg shadow-emerald-500/25 flex items-center justify-center gap-2 text-base transition transform active:scale-[0.98] disabled:opacity-50"
+            className="w-full mt-2 py-4 bg-gradient-to-r from-orange-500 to-orange-500 hover:from-orange-400 hover:to-orange-400 text-white font-bold rounded-2xl shadow-lg shadow-orange-500/25 flex items-center justify-center gap-2 text-base transition transform active:scale-[0.98] disabled:opacity-50"
           >
             {loading ? (
               <span className="inline-flex items-center gap-2">
@@ -167,7 +167,7 @@ export default function LoginPage() {
               onClick={() => quickLogin('08133333333', '123456')}
               className="py-2.5 px-2 bg-slate-800/60 hover:bg-slate-800 border border-slate-700/60 rounded-xl text-center transition group"
             >
-              <Truck size={18} className="mx-auto text-emerald-400 mb-1 group-hover:scale-110 transition-transform" />
+              <Truck size={18} className="mx-auto text-orange-400 mb-1 group-hover:scale-110 transition-transform" />
               <span className="block text-[11px] font-bold text-slate-200">Driver</span>
               <span className="block text-[9px] text-slate-400">Pak Budi</span>
             </button>

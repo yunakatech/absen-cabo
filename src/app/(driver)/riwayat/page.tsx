@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
@@ -89,7 +89,7 @@ export default function DriverHistoryPage() {
 
       {loading ? (
         <div className="flex-1 flex items-center justify-center py-20 text-slate-400">
-          <div className="w-8 h-8 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin" />
+          <div className="w-8 h-8 border-4 border-orange-500 border-t-transparent rounded-full animate-spin" />
         </div>
       ) : items.length === 0 ? (
         <div className="bg-slate-900/80 border border-slate-800 rounded-3xl p-8 text-center text-slate-400 space-y-2">
@@ -107,7 +107,7 @@ export default function DriverHistoryPage() {
                 <div
                   className={`w-10 h-10 rounded-xl flex items-center justify-center text-lg font-bold shrink-0 ${
                     item.type === 'ATTENDANCE'
-                      ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
+                      ? 'bg-orange-500/20 text-orange-400 border border-orange-500/30'
                       : 'bg-amber-500/20 text-amber-400 border border-amber-500/30'
                   }`}
                 >
@@ -125,7 +125,7 @@ export default function DriverHistoryPage() {
 
               <div className="text-right">
                 {item.type === 'ATTENDANCE' ? (
-                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800">
+                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-orange-100 text-orange-800">
                     HADIR
                   </span>
                 ) : (

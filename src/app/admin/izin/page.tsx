@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import React, { useEffect, useState, useCallback } from 'react';
 import { Check, X, Trash2, RefreshCw } from 'lucide-react';
@@ -111,7 +111,7 @@ export default function AdminLeavePage() {
               onClick={() => setStatusFilter(st)}
               className={`px-3 py-1.5 rounded-xl text-xs font-bold transition ${
                 statusFilter === st
-                  ? 'bg-emerald-500 text-slate-950 shadow-md'
+                  ? 'bg-orange-500 text-slate-950 shadow-md'
                   : 'text-slate-400 hover:text-white'
               }`}
             >
@@ -123,7 +123,7 @@ export default function AdminLeavePage() {
 
       {loading ? (
         <div className="py-20 flex justify-center text-slate-400">
-          <div className="w-8 h-8 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin" />
+          <div className="w-8 h-8 border-4 border-orange-500 border-t-transparent rounded-full animate-spin" />
         </div>
       ) : requests.length === 0 ? (
         <div className="bg-slate-900/80 border border-slate-800 rounded-3xl p-8 text-center text-slate-400">
@@ -146,7 +146,7 @@ export default function AdminLeavePage() {
                 </p>
                 {req.reason && <p className="text-xs text-slate-400 italic">Alasan: &ldquo;{req.reason}&rdquo;</p>}
                 {req.approved_by && (
-                  <p className="text-[11px] text-emerald-400 font-medium">
+                  <p className="text-[11px] text-orange-400 font-medium">
                     Disetujui oleh: {req.approved_by}
                   </p>
                 )}
@@ -163,7 +163,7 @@ export default function AdminLeavePage() {
                     <button
                       onClick={() => handleAction(req.id, 'APPROVE')}
                       disabled={actionId === req.id}
-                      className="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs rounded-xl transition flex items-center gap-1 disabled:opacity-50"
+                      className="px-3.5 py-2 bg-orange-600 hover:bg-orange-500 text-white font-bold text-xs rounded-xl transition flex items-center gap-1 disabled:opacity-50"
                     >
                       <Check size={16} />
                       <span>SETUJUI</span>

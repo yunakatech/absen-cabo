@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import React, { useEffect, useState } from 'react';
 import { Save, RefreshCw, Database, Clock, MapPin, Calendar, ToggleLeft, ToggleRight } from 'lucide-react';
@@ -106,7 +106,7 @@ export default function AdminSettingsPage() {
   if (loading) {
     return (
       <div className="py-20 flex justify-center text-slate-400">
-        <div className="w-8 h-8 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin" />
+        <div className="w-8 h-8 border-4 border-orange-500 border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
@@ -123,7 +123,7 @@ export default function AdminSettingsPage() {
         {/* Attendance Settings Card */}
         <div className="bg-slate-900/90 border border-slate-800 rounded-3xl p-6 shadow-xl space-y-6">
           <h2 className="text-lg font-bold text-white flex items-center gap-2 border-b border-slate-800 pb-3">
-            <Clock className="text-emerald-400" size={20} />
+            <Clock className="text-orange-400" size={20} />
             <span>Aturan Absensi Driver</span>
           </h2>
 
@@ -143,7 +143,7 @@ export default function AdminSettingsPage() {
                   })
                 }
                 className={`text-2xl transition ${
-                  settings.attendance_enabled === 'true' ? 'text-emerald-400' : 'text-slate-500'
+                  settings.attendance_enabled === 'true' ? 'text-orange-400' : 'text-slate-500'
                 }`}
               >
                 {settings.attendance_enabled === 'true' ? (
@@ -169,7 +169,7 @@ export default function AdminSettingsPage() {
                   })
                 }
                 className={`text-2xl transition ${
-                  settings.require_gps === 'true' ? 'text-emerald-400' : 'text-slate-500'
+                  settings.require_gps === 'true' ? 'text-orange-400' : 'text-slate-500'
                 }`}
               >
                 {settings.require_gps === 'true' ? (
@@ -272,7 +272,7 @@ export default function AdminSettingsPage() {
         <button
           type="submit"
           disabled={saving}
-          className="px-6 py-4 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 font-black rounded-2xl shadow-xl shadow-emerald-500/20 flex items-center justify-center gap-2 text-base transition transform active:scale-95 disabled:opacity-50"
+          className="px-6 py-4 bg-gradient-to-r from-orange-500 to-orange-500 hover:from-orange-400 hover:to-orange-400 text-slate-950 font-black rounded-2xl shadow-xl shadow-orange-500/20 flex items-center justify-center gap-2 text-base transition transform active:scale-95 disabled:opacity-50"
         >
           <Save size={20} />
           <span>{saving ? 'MENYIMPAN...' : 'SIMPAN PENGATURAN'}</span>

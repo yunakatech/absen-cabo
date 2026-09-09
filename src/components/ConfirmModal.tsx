@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import React from 'react';
 
@@ -32,7 +32,7 @@ export default function ConfirmModal({
       ? 'bg-rose-600 hover:bg-rose-700 text-white'
       : variant === 'warning'
       ? 'bg-amber-600 hover:bg-amber-700 text-white'
-      : 'bg-emerald-600 hover:bg-emerald-700 text-white';
+      : 'bg-orange-600 hover:bg-orange-700 text-white';
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-fade-in">

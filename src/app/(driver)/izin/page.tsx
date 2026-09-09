@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
@@ -144,7 +144,7 @@ export default function DriverLeavePage() {
               onClick={() => setDateOption('TODAY')}
               className={`py-3 px-2 rounded-xl border text-center transition text-xs font-bold ${
                 dateOption === 'TODAY'
-                  ? 'bg-emerald-500/20 border-emerald-500 text-emerald-300'
+                  ? 'bg-orange-500/20 border-orange-500 text-orange-300'
                   : 'bg-slate-800/60 border-slate-700/80 text-slate-400'
               }`}
             >
@@ -155,7 +155,7 @@ export default function DriverLeavePage() {
               onClick={() => setDateOption('TOMORROW')}
               className={`py-3 px-2 rounded-xl border text-center transition text-xs font-bold ${
                 dateOption === 'TOMORROW'
-                  ? 'bg-emerald-500/20 border-emerald-500 text-emerald-300'
+                  ? 'bg-orange-500/20 border-orange-500 text-orange-300'
                   : 'bg-slate-800/60 border-slate-700/80 text-slate-400'
               }`}
             >
@@ -166,7 +166,7 @@ export default function DriverLeavePage() {
               onClick={() => setDateOption('CUSTOM')}
               className={`py-3 px-2 rounded-xl border text-center transition text-xs font-bold ${
                 dateOption === 'CUSTOM'
-                  ? 'bg-emerald-500/20 border-emerald-500 text-emerald-300'
+                  ? 'bg-orange-500/20 border-orange-500 text-orange-300'
                   : 'bg-slate-800/60 border-slate-700/80 text-slate-400'
               }`}
             >
@@ -180,7 +180,7 @@ export default function DriverLeavePage() {
                 type="date"
                 value={customDate}
                 onChange={(e) => setCustomDate(e.target.value)}
-                className="w-full px-4 py-3 bg-slate-800 border border-slate-700 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                className="w-full px-4 py-3 bg-slate-800 border border-slate-700 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-orange-500"
                 required
               />
             </div>

@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import React, { useEffect, useState, useCallback } from 'react';
 import { Plus, Edit2, UserX, Trash2, Search, Truck, Phone, Lock, UserCheck } from 'lucide-react';
@@ -193,7 +193,7 @@ export default function AdminDriverPage() {
 
         <button
           onClick={openAddModal}
-          className="px-4 py-2.5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-sm rounded-xl shadow-lg shadow-emerald-500/20 flex items-center justify-center gap-2 transition"
+          className="px-4 py-2.5 bg-orange-500 hover:bg-orange-400 text-slate-950 font-bold text-sm rounded-xl shadow-lg shadow-orange-500/20 flex items-center justify-center gap-2 transition"
         >
           <Plus size={18} />
           <span>+ TAMBAH DRIVER</span>
@@ -210,7 +210,7 @@ export default function AdminDriverPage() {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Cari berdasarkan Nama, Kode, atau No HP..."
-          className="w-full pl-10 pr-4 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-white text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+          className="w-full pl-10 pr-4 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-white text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
         />
       </div>
 
@@ -244,7 +244,7 @@ export default function AdminDriverPage() {
               ) : (
                 filteredDrivers.map((d) => (
                   <tr key={d.id} className="hover:bg-slate-800/40 transition">
-                    <td className="px-6 py-4 font-mono font-bold text-emerald-400">
+                    <td className="px-6 py-4 font-mono font-bold text-orange-400">
                       {d.employee_code}
                     </td>
                     <td className="px-6 py-4 font-semibold text-white">{d.name}</td>
@@ -390,7 +390,7 @@ export default function AdminDriverPage() {
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="px-5 py-2.5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-sm rounded-xl shadow-md disabled:opacity-50"
+                  className="px-5 py-2.5 bg-orange-500 hover:bg-orange-400 text-slate-950 font-bold text-sm rounded-xl shadow-md disabled:opacity-50"
                 >
                   {submitting ? 'Memproses...' : 'SIMPAN'}
                 </button>

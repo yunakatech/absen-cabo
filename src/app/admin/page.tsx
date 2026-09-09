@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import React, { useEffect, useState, useCallback } from 'react';
 import Link from 'next/link';
@@ -67,7 +67,7 @@ export default function AdminDashboard() {
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center py-20 text-slate-400 gap-3">
-        <div className="w-10 h-10 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin" />
+        <div className="w-10 h-10 border-4 border-orange-500 border-t-transparent rounded-full animate-spin" />
         <p className="text-sm font-medium">Memuat Dashboard Admin...</p>
       </div>
     );
@@ -81,7 +81,7 @@ export default function AdminDashboard() {
           <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
             Dashboard Utama
           </h1>
-          <p className="text-xs sm:text-sm text-emerald-400 font-medium mt-1 uppercase tracking-wider">
+          <p className="text-xs sm:text-sm text-orange-400 font-medium mt-1 uppercase tracking-wider">
             {formattedDate || 'Selasa, 8 September 2026'}
           </p>
         </div>
@@ -107,12 +107,12 @@ export default function AdminDashboard() {
         </div>
 
         {/* Sudah Absen */}
-        <div className="bg-slate-900/90 border border-emerald-900/40 rounded-2xl p-5 shadow-lg">
-          <div className="flex items-center justify-between text-emerald-400 mb-2">
+        <div className="bg-slate-900/90 border border-orange-900/40 rounded-2xl p-5 shadow-lg">
+          <div className="flex items-center justify-between text-orange-400 mb-2">
             <span className="text-xs font-bold uppercase tracking-wider">Sudah Absen</span>
             <CheckCircle2 size={18} />
           </div>
-          <p className="text-3xl font-black text-emerald-400">{stats?.sudahAbsen ?? 0}</p>
+          <p className="text-3xl font-black text-orange-400">{stats?.sudahAbsen ?? 0}</p>
         </div>
 
         {/* Belum Absen */}
@@ -149,14 +149,14 @@ export default function AdminDashboard() {
         <div className="bg-slate-900/90 border border-slate-800 rounded-3xl p-6 shadow-xl flex flex-col justify-between">
           <div>
             <div className="flex items-center gap-2 mb-2">
-              <PieChart size={20} className="text-emerald-400" />
+              <PieChart size={20} className="text-orange-400" />
               <h3 className="font-bold text-white text-base">Kehadiran Hari Ini</h3>
             </div>
             <p className="text-xs text-slate-400">Persentase Driver Aktif yang Sudah Absen</p>
           </div>
 
           <div className="py-6 text-center">
-            <div className="text-5xl font-black text-emerald-400 tracking-tight">
+            <div className="text-5xl font-black text-orange-400 tracking-tight">
               {stats?.attendancePercentage ?? 0}%
             </div>
             <p className="text-xs text-slate-400 mt-2">
@@ -167,7 +167,7 @@ export default function AdminDashboard() {
           {/* Progress bar */}
           <div className="w-full bg-slate-800 rounded-full h-3 overflow-hidden">
             <div
-              className="bg-gradient-to-r from-emerald-500 to-teal-400 h-3 rounded-full transition-all duration-500"
+              className="bg-gradient-to-r from-orange-500 to-orange-400 h-3 rounded-full transition-all duration-500"
               style={{ width: `${Math.min(stats?.attendancePercentage || 0, 100)}%` }}
             />
           </div>
@@ -192,7 +192,7 @@ export default function AdminDashboard() {
                 href="/admin/izin?status=APPROVED"
                 className="flex items-center justify-between p-3 bg-slate-800/60 rounded-xl hover:bg-slate-800 transition"
               >
-                <span className="text-xs font-semibold text-emerald-300">Disetujui (Approved)</span>
+                <span className="text-xs font-semibold text-orange-300">Disetujui (Approved)</span>
                 <span className="text-sm font-bold text-white">{stats?.leaveSummary?.approved ?? 0}</span>
               </Link>
 
@@ -208,7 +208,7 @@ export default function AdminDashboard() {
 
           <Link
             href="/admin/izin"
-            className="mt-4 text-center block text-xs font-bold text-emerald-400 hover:text-emerald-300 transition"
+            className="mt-4 text-center block text-xs font-bold text-orange-400 hover:text-orange-300 transition"
           >
             Kelola Pengajuan Izin &rarr;
           </Link>
@@ -226,7 +226,7 @@ export default function AdminDashboard() {
             <p className="text-xs text-slate-400 mb-4">Daftar driver yang belum absen &amp; tidak izin</p>
 
             {belumAbsenList.length === 0 ? (
-              <div className="text-center py-6 text-emerald-400 font-semibold text-xs">
+              <div className="text-center py-6 text-orange-400 font-semibold text-xs">
                 ✓ Semua Driver Sudah Absen Hari Ini!
               </div>
             ) : (
@@ -248,7 +248,7 @@ export default function AdminDashboard() {
 
           <Link
             href="/admin/absensi"
-            className="mt-4 text-center block text-xs font-bold text-emerald-400 hover:text-emerald-300 transition"
+            className="mt-4 text-center block text-xs font-bold text-orange-400 hover:text-orange-300 transition"
           >
             Lihat Tabel Absensi &rarr;
           </Link>

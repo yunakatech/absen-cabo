@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 
 type BadgeType = 'role' | 'leave' | 'attendance_source' | 'status';
 
@@ -19,7 +19,7 @@ export default function StatusBadge({ type, value }: Props) {
         color = 'bg-blue-100 text-blue-700 font-semibold';
         break;
       case 'DRIVER':
-        color = 'bg-emerald-100 text-emerald-700 font-semibold';
+        color = 'bg-orange-100 text-orange-700 font-semibold';
         break;
     }
   } else if (type === 'leave') {
@@ -28,7 +28,7 @@ export default function StatusBadge({ type, value }: Props) {
         color = 'bg-amber-100 text-amber-800 border border-amber-300';
         break;
       case 'APPROVED':
-        color = 'bg-emerald-100 text-emerald-800 border border-emerald-300';
+        color = 'bg-orange-100 text-orange-800 border border-orange-300';
         break;
       case 'REJECTED':
         color = 'bg-rose-100 text-rose-800 border border-rose-300';
@@ -37,7 +37,7 @@ export default function StatusBadge({ type, value }: Props) {
   } else if (type === 'attendance_source') {
     switch (value) {
       case 'DRIVER':
-        color = 'bg-emerald-50 text-emerald-600 border border-emerald-200';
+        color = 'bg-orange-50 text-orange-600 border border-orange-200';
         break;
       case 'ADMIN':
         color = 'bg-indigo-50 text-indigo-600 border border-indigo-200';
@@ -46,7 +46,7 @@ export default function StatusBadge({ type, value }: Props) {
   } else if (type === 'status') {
     switch (value) {
       case 'ACTIVE':
-        color = 'bg-emerald-100 text-emerald-700';
+        color = 'bg-orange-100 text-orange-700';
         break;
       case 'INACTIVE':
         color = 'bg-rose-100 text-rose-700';
