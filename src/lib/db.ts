@@ -823,6 +823,32 @@ export const db = {
         ],
       };
 
+      // 1. Fetch current spreadsheet info to check existing tab names
+      const spreadsheetInfo = await client.sheets.spreadsheets.get({
+        spreadsheetId: client.spreadsheetId,
+      });
+
+      const existingTabNames = (spreadsheetInfo.data.sheets || [])
+        .map((s) => s.properties?.title)
+        .filter((t): t is string => Boolean(t));
+
+      // 2. Automatically create missing tabs via batchUpdate
+      const addSheetRequests = Object.keys(headers)
+        .filter((sheetName) => !existingTabNames.includes(sheetName))
+        .map((sheetName) => ({
+          addSheet: {
+            properties: { title: sheetName },
+          },
+        }));
+
+      if (addSheetRequests.length > 0) {
+        await client.sheets.spreadsheets.batchUpdate({
+          spreadsheetId: client.spreadsheetId,
+          requestBody: { requests: addSheetRequests },
+        });
+      }
+
+      // 3. Write header rows for each tab
       for (const [sheetName, cols] of Object.entries(headers)) {
         await client.sheets.spreadsheets.values.update({
           spreadsheetId: client.spreadsheetId,
@@ -832,13 +858,41 @@ export const db = {
         });
       }
 
-      // Check if Settings is empty, seed default settings
+      // 4. Seed initial default users if Users sheet is empty
+      const usersRes = await client.sheets.spreadsheets.values.get({
+        spreadsheetId: client.spreadsheetId,
+        range: 'Users!A2:J',
+      });
+      const userRows = usersRes.data.values || [];
+      if (userRows.length === 0) {
+        const seedData = await getDefaultSeedData();
+        const userValues = seedData.users.map((u) => [
+          u.id,
+          u.employee_code,
+          u.name,
+          u.phone,
+          u.pin_hash,
+          u.role,
+          u.supervisor_id || '',
+          u.status,
+          u.created_at,
+          u.updated_at,
+        ]);
+        await client.sheets.spreadsheets.values.update({
+          spreadsheetId: client.spreadsheetId,
+          range: 'Users!A2:J',
+          valueInputOption: 'USER_ENTERED',
+          requestBody: { values: userValues },
+        });
+      }
+
+      // 5. Seed default settings
       const currentSettings = await this.getSettings();
       await this.saveSettings(currentSettings);
 
       return {
         success: true,
-        message: 'Google Spreadsheet header tabs verified and initialized successfully!',
+        message: 'Google Spreadsheet tabs, headers, and seed users initialized successfully!',
       };
     } catch (err: unknown) {
       const errMsg = err instanceof Error ? err.message : String(err);
