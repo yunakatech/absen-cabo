@@ -6,6 +6,7 @@ import { Plus, Edit2, Trash2, MapPin, Search, RefreshCw, Download, CheckCircle2,
 import toast from 'react-hot-toast';
 import StatusBadge from '@/components/StatusBadge';
 import ConfirmModal from '@/components/ConfirmModal';
+import DatePicker from '@/components/DatePicker';
 import { formatIndonesianDate } from '@/lib/time';
 
 /* ─── Types ──────────────────────────────────────────── */
@@ -336,25 +337,12 @@ export default function AdminAttendancePage() {
       {/* Filters Bar */}
       <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 flex flex-col sm:flex-row items-center gap-4">
         {/* Date Filter */}
-        <div className="w-full sm:w-auto">
-          <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">
-            Filter Tanggal:
-          </label>
-          <input
-            type="date"
-            value={filterDate}
-            onChange={(e) => setFilterDate(e.target.value)}
-            className="px-3 py-2 bg-slate-800 border border-slate-700 rounded-xl text-white text-xs"
-          />
-          {filterDate && (
-            <button
-              onClick={() => setFilterDate('')}
-              className="ml-2 text-xs text-orange-400 font-semibold"
-            >
-              Reset
-            </button>
-          )}
-        </div>
+        <DatePicker
+          label="Filter Tanggal:"
+          value={filterDate}
+          onChange={setFilterDate}
+          todayDefault
+        />
 
         {/* Driver Filter */}
         <div className="w-full sm:w-auto">
@@ -590,18 +578,13 @@ export default function AdminAttendancePage() {
                 </div>
               )}
 
-              <div>
-                <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">
-                  Tanggal Absen
-                </label>
-                <input
-                  type="date"
-                  value={formData.attendance_date}
-                  onChange={(e) => setFormData({ ...formData, attendance_date: e.target.value })}
-                  className="w-full px-4 py-2.5 bg-slate-800 border border-slate-700 rounded-xl text-white text-sm"
-                  required
-                />
-              </div>
+              <DatePicker
+                label="Tanggal Absen"
+                value={formData.attendance_date}
+                onChange={(val) => setFormData({ ...formData, attendance_date: val })}
+                todayDefault
+                className="w-full"
+              />
 
               <div>
                 <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">

@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { ArrowLeft, Send, Calendar, FileText, CheckCircle } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { LeaveType } from '@/lib/types';
+import DatePicker from '@/components/DatePicker';
 
 export default function DriverLeavePage() {
   const router = useRouter();
@@ -175,13 +176,13 @@ export default function DriverLeavePage() {
           </div>
 
           {dateOption === 'CUSTOM' && (
-            <div className="relative mt-2">
-              <input
-                type="date"
+            <div className="mt-2">
+              <DatePicker
                 value={customDate}
-                onChange={(e) => setCustomDate(e.target.value)}
-                className="w-full px-4 py-3 bg-slate-800 border border-slate-700 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-orange-500"
-                required
+                onChange={setCustomDate}
+                todayDefault
+                placeholder="Pilih tanggal izin"
+                className="w-full"
               />
             </div>
           )}
