@@ -52,10 +52,8 @@ export default function AdminSidebar({ userName = 'Admin' }: Props) {
     <>
       {/* Mobile Menu Toggle Button */}
       <div className="lg:hidden fixed top-0 left-0 right-0 z-40 bg-slate-900 text-white px-4 py-3 flex items-center justify-between shadow-md">
-        <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-lg bg-emerald-500 flex items-center justify-center font-bold text-white text-sm">
-            AC
-          </div>
+        <div className="flex items-center gap-2.5">
+          <img src="/logo.svg" alt="Absen Cabo Logo" className="w-8 h-8 rounded-lg object-contain bg-slate-800 p-0.5" />
           <span className="font-bold text-base tracking-wide">Absen Cabo</span>
         </div>
         <button
@@ -83,9 +81,7 @@ export default function AdminSidebar({ userName = 'Admin' }: Props) {
         <div>
           {/* Header */}
           <div className="p-6 border-b border-slate-800 flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-400 to-teal-600 flex items-center justify-center shadow-lg shadow-emerald-900/30 text-white font-bold text-lg">
-              AC
-            </div>
+            <img src="/logo.svg" alt="Absen Cabo Logo" className="w-10 h-10 rounded-xl object-contain bg-slate-800/80 p-1 shadow-lg shadow-emerald-900/20 border border-slate-700/50" />
             <div>
               <h1 className="font-bold text-lg leading-tight tracking-wide text-white">Absen Cabo</h1>
               <p className="text-xs text-slate-400">Admin Control Panel</p>

@@ -72,9 +72,11 @@ export default function LoginPage() {
       <div className="w-full max-w-md bg-slate-900/90 border border-slate-800 rounded-3xl p-6 sm:p-8 shadow-2xl backdrop-blur-xl relative z-10">
         {/* Header Branding */}
         <div className="text-center mb-8">
-          <div className="w-16 h-16 bg-gradient-to-br from-emerald-400 to-teal-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-xl shadow-emerald-500/20 text-white font-extrabold text-2xl">
-            AC
-          </div>
+          <img
+            src="/logo.svg"
+            alt="Absen Cabo Logo"
+            className="w-20 h-20 mx-auto mb-3 object-contain bg-slate-800/80 p-2 rounded-3xl shadow-xl shadow-emerald-500/10 border border-slate-700/60"
+          />
           <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
             Absen Cabo
           </h1>

@@ -9,6 +9,11 @@ export const metadata: Metadata = {
   title: 'Absen Cabo — Driver Attendance & Leave Approval',
   description: 'Sistem Absensi Sederhana & Approval Izin Driver Transportasi',
   manifest: '/manifest.json',
+  icons: {
+    icon: '/favicon.svg',
+    shortcut: '/favicon.svg',
+    apple: '/logo.svg',
+  },
   appleWebApp: {
     capable: true,
     statusBarStyle: 'black-translucent',

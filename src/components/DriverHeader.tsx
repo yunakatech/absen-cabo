@@ -28,9 +28,7 @@ export default function DriverHeader({ userName = 'Pak Driver' }: Props) {
     <header className="bg-slate-900 text-white border-b border-slate-800 sticky top-0 z-30 shadow-md">
       <div className="max-w-md mx-auto px-4 py-3 flex items-center justify-between">
         <Link href="/" className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-lg bg-emerald-500 flex items-center justify-center font-extrabold text-white text-xs shadow-md">
-            AC
-          </div>
+          <img src="/logo.svg" alt="Absen Cabo Logo" className="w-8 h-8 rounded-lg object-contain bg-slate-800 p-0.5 shadow-md border border-slate-700/50" />
           <div>
             <span className="font-bold text-sm text-white block leading-tight">Absen Cabo</span>
             <span className="text-[10px] text-emerald-400 font-medium">{userName}</span>
