@@ -33,6 +33,13 @@ interface Settings {
   attendance_end_time: string;
   require_gps: boolean;
   attendance_enabled: boolean;
+  monday_enabled?: boolean;
+  tuesday_enabled?: boolean;
+  wednesday_enabled?: boolean;
+  thursday_enabled?: boolean;
+  friday_enabled?: boolean;
+  saturday_enabled?: boolean;
+  sunday_enabled?: boolean;
 }
 
 interface AttendanceRecord {
@@ -166,17 +173,36 @@ export default function DriverHomePage() {
     );
   }
 
-  const startTime = settings?.attendance_start_time || '05:00';
-  const endTime = settings?.attendance_end_time || '13:00';
+  const rawStart = settings?.attendance_start_time || '05:00';
+  const rawEnd = settings?.attendance_end_time || '13:00';
+  const startTime = rawStart.substring(0, 5);
+  const endTime = rawEnd.substring(0, 5);
   const currentHHMM = serverTime?.hhmm || '00:00';
 
-  // Determine state 1 to 6
+  // Check if today is a work day based on settings
+  let isTodayWorkDay = true;
+  if (settings && serverTime) {
+    const d = serverTime.dayOfWeek;
+    if (d === 1 && settings.monday_enabled === false) isTodayWorkDay = false;
+    if (d === 2 && settings.tuesday_enabled === false) isTodayWorkDay = false;
+    if (d === 3 && settings.wednesday_enabled === false) isTodayWorkDay = false;
+    if (d === 4 && settings.thursday_enabled === false) isTodayWorkDay = false;
+    if (d === 5 && settings.friday_enabled === false) isTodayWorkDay = false;
+    if (d === 6 && settings.saturday_enabled === false) isTodayWorkDay = false;
+    if (d === 0 && settings.sunday_enabled !== true) isTodayWorkDay = false;
+  }
+
+  // Determine state 1 to 7
   let stateNum = 2; // Default OPEN
 
   if (approvedLeave) {
     stateNum = 6; // STATE 6 — Izin Disetujui
   } else if (todayAttendance) {
     stateNum = 3; // STATE 3 — Sudah Absen
+  } else if (settings && !settings.attendance_enabled) {
+    stateNum = 5; // STATE 5 — Absensi Dinonaktifkan Admin
+  } else if (!isTodayWorkDay) {
+    stateNum = 7; // STATE 7 — Libur Operasional
   } else if (currentHHMM < startTime) {
     stateNum = 1; // STATE 1 — Belum Waktu Absen
   } else if (currentHHMM > endTime) {
@@ -234,6 +260,32 @@ export default function DriverHomePage() {
             </div>
             <p className="text-xs text-slate-400">
               Terima kasih! Absensi Anda telah berhasil dicatat.
+            </p>
+          </div>
+        )}
+
+        {/* STATE 5 — ABSENSI DINONAKTIFKAN ADMIN */}
+        {stateNum === 5 && (
+          <div className="space-y-4 py-4">
+            <div className="w-20 h-20 rounded-full bg-slate-800 text-slate-400 border border-slate-700 flex items-center justify-center mx-auto">
+              <AlertTriangle size={44} />
+            </div>
+            <h3 className="text-lg font-bold text-slate-300">Absensi Dinonaktifkan</h3>
+            <p className="text-xs text-slate-400 max-w-xs mx-auto leading-relaxed">
+              Sistem absensi saat ini sedang dinonaktifkan oleh Admin.
+            </p>
+          </div>
+        )}
+
+        {/* STATE 7 — LIBUR OPERASIONAL */}
+        {stateNum === 7 && (
+          <div className="space-y-4 py-4">
+            <div className="w-20 h-20 rounded-full bg-blue-500/20 text-blue-400 border border-blue-500/40 flex items-center justify-center mx-auto">
+              <Calendar size={44} />
+            </div>
+            <h3 className="text-lg font-bold text-blue-300">Hari Libur Operasional</h3>
+            <p className="text-xs text-slate-300 max-w-xs mx-auto leading-relaxed">
+              Hari ini tidak ada jadwal absensi kerja.
             </p>
           </div>
         )}

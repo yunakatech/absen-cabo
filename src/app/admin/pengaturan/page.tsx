@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import React, { useEffect, useState } from 'react';
 import { Save, RefreshCw, Database, Clock, MapPin, Calendar, ToggleLeft, ToggleRight } from 'lucide-react';
@@ -23,13 +23,23 @@ export default function AdminSettingsPage() {
       .then((r) => r.json())
       .then((d) => {
         if (d.success && d.settings) {
+          const s = d.settings;
+          const days: string[] = [];
+          if (s.monday_enabled) days.push('1');
+          if (s.tuesday_enabled) days.push('2');
+          if (s.wednesday_enabled) days.push('3');
+          if (s.thursday_enabled) days.push('4');
+          if (s.friday_enabled) days.push('5');
+          if (s.saturday_enabled) days.push('6');
+          if (s.sunday_enabled) days.push('0');
+
           setSettings({
-            attendance_enabled: String(d.settings.attendance_enabled),
-            attendance_start_time: d.settings.attendance_start_time || '05:00:00',
-            attendance_end_time: d.settings.attendance_end_time || '13:00:00',
-            require_gps: String(d.settings.require_gps),
-            leave_enabled: String(d.settings.leave_enabled),
-            work_days: d.settings.work_days || '1,2,3,4,5,6',
+            attendance_enabled: String(s.attendance_enabled),
+            attendance_start_time: s.attendance_start_time?.substring(0, 5) || '05:00',
+            attendance_end_time: s.attendance_end_time?.substring(0, 5) || '13:00',
+            require_gps: String(s.require_gps),
+            leave_enabled: String(s.leave_enabled),
+            work_days: days.length > 0 ? days.join(',') : '1,2,3,4,5,6',
           });
         }
       })
