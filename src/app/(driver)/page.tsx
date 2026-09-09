@@ -70,20 +70,20 @@ export default function DriverHomePage() {
         fetch('/api/leave').then((r) => r.json()),
       ]);
 
-      if (resMe.success) setUser(resMe.user);
-      if (resTime.success) setServerTime(resTime.time);
-      if (resSettings.success) setSettings(resSettings.settings);
+      if (resMe?.success) setUser(resMe.user);
+      if (resTime?.success) setServerTime(resTime.time);
+      if (resSettings?.success) setSettings(resSettings.settings);
 
-      // Check today's attendance
-      if (resAtt.success && resTime.success) {
+      // Check today's attendance safely
+      if (resAtt?.success && Array.isArray(resAtt.attendance) && resTime?.success) {
         const attToday = resAtt.attendance.find(
           (a: AttendanceRecord) => a.attendance_date === resTime.time.dateStr
         );
         setTodayAttendance(attToday || null);
       }
 
-      // Check today's approved leave
-      if (resLeave.success && resTime.success) {
+      // Check today's approved leave safely
+      if (resLeave?.success && Array.isArray(resLeave.requests) && resTime?.success) {
         const leaveToday = resLeave.requests.find(
           (l: LeaveRecord) =>
             l.status === 'APPROVED' &&

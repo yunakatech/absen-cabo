@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
@@ -31,7 +31,7 @@ export default function DriverHistoryPage() {
 
         const combined: HistoryItem[] = [];
 
-        if (resAtt.success) {
+        if (resAtt?.success && Array.isArray(resAtt.attendance)) {
           resAtt.attendance.forEach((a: any) => {
             combined.push({
               id: a.id,
@@ -46,7 +46,7 @@ export default function DriverHistoryPage() {
           });
         }
 
-        if (resLeave.success) {
+        if (resLeave?.success && Array.isArray(resLeave.requests)) {
           resLeave.requests.forEach((l: any) => {
             combined.push({
               id: l.id,
