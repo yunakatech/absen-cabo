@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState, useCallback } from 'react';
-import { Plus, Edit2, Trash2, MapPin, Calendar, Search, RefreshCw } from 'lucide-react';
+import { Plus, Edit2, Trash2, MapPin, Search, RefreshCw, Download } from 'lucide-react';
 import toast from 'react-hot-toast';
 import StatusBadge from '@/components/StatusBadge';
 import ConfirmModal from '@/components/ConfirmModal';
@@ -199,6 +199,62 @@ export default function AdminAttendancePage() {
     return true;
   });
 
+  const handleExportCSV = () => {
+    if (filteredAttendance.length === 0) {
+      toast.error('Tidak ada data absensi untuk diexport');
+      return;
+    }
+
+    const headers = [
+      'No',
+      'Tanggal Absen',
+      'Waktu (WITA)',
+      'Nama Driver',
+      'Supervisor',
+      'Status',
+      'Sumber',
+      'Latitude',
+      'Longitude',
+      'Google Maps Link',
+    ];
+
+    const rows = filteredAttendance.map((item, index) => {
+      const gmapsLink =
+        item.latitude && item.longitude
+          ? `https://www.google.com/maps?q=${item.latitude},${item.longitude}`
+          : '-';
+      return [
+        index + 1,
+        item.attendance_date,
+        item.attendance_time,
+        `"${item.driver_name.replace(/"/g, '""')}"`,
+        `"${(item.supervisor_name || '-').replace(/"/g, '""')}"`,
+        item.status,
+        item.source,
+        item.latitude || '-',
+        item.longitude || '-',
+        `"${gmapsLink}"`,
+      ];
+    });
+
+    const csvContent =
+      '\uFEFF' + [headers.join(','), ...rows.map((r) => r.join(','))].join('\n');
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+
+    const dateSuffix = filterDate || 'Semua_Tanggal';
+    link.href = url;
+    link.setAttribute('download', `Absen_Cabo_Export_${dateSuffix}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+
+    toast.success(`${filteredAttendance.length} data absensi berhasil diexport ke CSV`);
+  };
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -208,13 +264,23 @@ export default function AdminAttendancePage() {
           <p className="text-xs text-slate-400">Rekapitulasi dan pengelolaan data absensi harian</p>
         </div>
 
-        <button
-          onClick={openAddModal}
-          className="px-4 py-2.5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-sm rounded-xl shadow-lg shadow-emerald-500/20 flex items-center justify-center gap-2 transition"
-        >
-          <Plus size={18} />
-          <span>+ ABSENSI MANUAL</span>
-        </button>
+        <div className="flex items-center gap-3">
+          <button
+            onClick={handleExportCSV}
+            className="px-4 py-2.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-emerald-400 font-bold text-sm rounded-xl shadow-md flex items-center justify-center gap-2 transition"
+          >
+            <Download size={18} />
+            <span>EXPORT CSV</span>
+          </button>
+
+          <button
+            onClick={openAddModal}
+            className="px-4 py-2.5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-sm rounded-xl shadow-lg shadow-emerald-500/20 flex items-center justify-center gap-2 transition"
+          >
+            <Plus size={18} />
+            <span>+ ABSENSI MANUAL</span>
+          </button>
+        </div>
       </div>
 
       {/* Filters Bar */}
