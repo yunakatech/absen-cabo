@@ -23,6 +23,12 @@ export const DEFAULT_SETTINGS: AppSettings = {
   sunday_enabled: false,
 };
 
+function toBool(val: unknown, defaultVal = false): boolean {
+  if (val === undefined || val === null || val === '') return defaultVal;
+  const s = String(val).trim().toLowerCase();
+  return s === 'true' || s === '1' || s === 'yes' || s === 'y' || s === 't';
+}
+
 // Initial Seed Users (PIN for all: 123456)
 // Generated bcrypt hash for "123456"
 const DEFAULT_PIN_HASH = '$2a$10$r9ZfFhA6E6f5S5c.pU2s7eO0S0I0d4x9Y8Z7A6B5C4D3E2F1G0H1I'; // bcrypt hash for 123456
@@ -636,19 +642,19 @@ export const db = {
     return {
       company_name: rawSettings.company_name ?? DEFAULT_SETTINGS.company_name,
       timezone: rawSettings.timezone ?? DEFAULT_SETTINGS.timezone,
-      attendance_enabled: rawSettings.attendance_enabled === 'true',
+      attendance_enabled: toBool(rawSettings.attendance_enabled, DEFAULT_SETTINGS.attendance_enabled),
       attendance_start_time: rawSettings.attendance_start_time ?? DEFAULT_SETTINGS.attendance_start_time,
       attendance_end_time: rawSettings.attendance_end_time ?? DEFAULT_SETTINGS.attendance_end_time,
-      require_gps: rawSettings.require_gps === 'true',
-      leave_enabled: rawSettings.leave_enabled === 'true',
-      leave_reason_required: rawSettings.leave_reason_required === 'true',
-      monday_enabled: rawSettings.monday_enabled !== 'false',
-      tuesday_enabled: rawSettings.tuesday_enabled !== 'false',
-      wednesday_enabled: rawSettings.wednesday_enabled !== 'false',
-      thursday_enabled: rawSettings.thursday_enabled !== 'false',
-      friday_enabled: rawSettings.friday_enabled !== 'false',
-      saturday_enabled: rawSettings.saturday_enabled !== 'false',
-      sunday_enabled: rawSettings.sunday_enabled === 'true',
+      require_gps: toBool(rawSettings.require_gps, DEFAULT_SETTINGS.require_gps),
+      leave_enabled: toBool(rawSettings.leave_enabled, DEFAULT_SETTINGS.leave_enabled),
+      leave_reason_required: toBool(rawSettings.leave_reason_required, DEFAULT_SETTINGS.leave_reason_required),
+      monday_enabled: toBool(rawSettings.monday_enabled, DEFAULT_SETTINGS.monday_enabled),
+      tuesday_enabled: toBool(rawSettings.tuesday_enabled, DEFAULT_SETTINGS.tuesday_enabled),
+      wednesday_enabled: toBool(rawSettings.wednesday_enabled, DEFAULT_SETTINGS.wednesday_enabled),
+      thursday_enabled: toBool(rawSettings.thursday_enabled, DEFAULT_SETTINGS.thursday_enabled),
+      friday_enabled: toBool(rawSettings.friday_enabled, DEFAULT_SETTINGS.friday_enabled),
+      saturday_enabled: toBool(rawSettings.saturday_enabled, DEFAULT_SETTINGS.saturday_enabled),
+      sunday_enabled: toBool(rawSettings.sunday_enabled, DEFAULT_SETTINGS.sunday_enabled),
     };
   },
 
