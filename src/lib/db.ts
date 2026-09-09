@@ -275,7 +275,7 @@ export const db = {
           range: 'Users!A2:J',
         });
         const rows = res.data.values || [];
-        return rows.map((r) => ({
+        const users = rows.map((r) => ({
           id: r[0] || '',
           employee_code: r[1] || '',
           name: r[2] || '',
@@ -287,6 +287,12 @@ export const db = {
           created_at: r[8] || '',
           updated_at: r[9] || '',
         }));
+
+        // Keep local memory cache in sync with Google Sheets
+        if (memoryDbCache) {
+          memoryDbCache.users = users;
+        }
+        return users;
       } catch (err) {
         console.error('Google Sheets read error (Users):', err);
       }
@@ -324,23 +330,29 @@ export const db = {
   },
 
   /**
-   * Save (Insert or Update) User
+   * Save (Insert or Update) User — Always reads from Google Sheets first to prevent cold-start resets
    */
   async saveUser(user: User): Promise<User> {
-    const localData = await ensureLocalDb();
-    const existingIdx = localData.users.findIndex((u) => u.id === user.id);
+    // 1. Always fetch latest users from source of truth (Google Sheets or local DB)
+    const users = await this.getUsers();
+    const updatedUser = { ...user, updated_at: new Date().toISOString() };
+    const existingIdx = users.findIndex((u) => u.id === user.id);
     if (existingIdx >= 0) {
-      localData.users[existingIdx] = { ...user, updated_at: new Date().toISOString() };
+      users[existingIdx] = updatedUser;
     } else {
-      localData.users.push(user);
+      users.push(updatedUser);
     }
+
+    // 2. Update local DB cache
+    const localData = await ensureLocalDb();
+    localData.users = users;
     saveLocalDb(localData);
 
+    // 3. Write complete user list to Google Sheets
     const client = getGoogleSheetsClient();
     if (client) {
       try {
-        // Sync full Users sheet
-        const values = localData.users.map((u) => [
+        const values = users.map((u) => [
           u.id,
           u.employee_code,
           u.name,
@@ -364,26 +376,29 @@ export const db = {
       }
     }
 
-    return user;
+    return updatedUser;
   },
 
   /**
-   * Delete User (Soft Delete status = INACTIVE or full delete if requested)
+   * Delete User — Always reads from Google Sheets first to prevent cold-start resets
    */
   async deleteUser(id: string, hardDelete = false): Promise<boolean> {
-    const localData = await ensureLocalDb();
+    let users = await this.getUsers();
     if (hardDelete) {
-      localData.users = localData.users.filter((u) => u.id !== id);
+      users = users.filter((u) => u.id !== id);
     } else {
-      const u = localData.users.find((u) => u.id === id);
+      const u = users.find((u) => u.id === id);
       if (u) u.status = 'INACTIVE';
     }
+
+    const localData = await ensureLocalDb();
+    localData.users = users;
     saveLocalDb(localData);
 
     const client = getGoogleSheetsClient();
     if (client) {
       try {
-        const values = localData.users.map((u) => [
+        const values = users.map((u) => [
           u.id,
           u.employee_code,
           u.name,
@@ -399,12 +414,14 @@ export const db = {
           spreadsheetId: client.spreadsheetId,
           range: 'Users!A2:J',
         });
-        await client.sheets.spreadsheets.values.update({
-          spreadsheetId: client.spreadsheetId,
-          range: 'Users!A2:J',
-          valueInputOption: 'USER_ENTERED',
-          requestBody: { values },
-        });
+        if (values.length > 0) {
+          await client.sheets.spreadsheets.values.update({
+            spreadsheetId: client.spreadsheetId,
+            range: 'Users!A2:J',
+            valueInputOption: 'USER_ENTERED',
+            requestBody: { values },
+          });
+        }
       } catch (err) {
         console.error('Google Sheets sync error (deleteUser):', err);
       }
@@ -424,7 +441,7 @@ export const db = {
           range: 'Attendance!A2:M',
         });
         const rows = res.data.values || [];
-        return rows.map((r) => ({
+        const records = rows.map((r) => ({
           id: r[0] || '',
           attendance_key: r[1] || '',
           attendance_date: r[2] || '',
@@ -439,6 +456,11 @@ export const db = {
           created_at: r[11] || '',
           updated_at: r[12] || '',
         }));
+
+        if (memoryDbCache) {
+          memoryDbCache.attendance = records;
+        }
+        return records;
       } catch (err) {
         console.error('Google Sheets read error (Attendance):', err);
       }
@@ -449,22 +471,25 @@ export const db = {
   },
 
   /**
-   * Save Attendance Record
+   * Save Attendance Record — Always reads from Google Sheets first to prevent cold-start resets
    */
   async saveAttendance(item: Attendance): Promise<Attendance> {
-    const localData = await ensureLocalDb();
-    const idx = localData.attendance.findIndex((a) => a.id === item.id);
+    const records = await this.getAttendance();
+    const idx = records.findIndex((a) => a.id === item.id);
     if (idx >= 0) {
-      localData.attendance[idx] = item;
+      records[idx] = item;
     } else {
-      localData.attendance.push(item);
+      records.push(item);
     }
+
+    const localData = await ensureLocalDb();
+    localData.attendance = records;
     saveLocalDb(localData);
 
     const client = getGoogleSheetsClient();
     if (client) {
       try {
-        const values = localData.attendance.map((a) => [
+        const values = records.map((a) => [
           a.id,
           a.attendance_key,
           a.attendance_date,
@@ -494,17 +519,18 @@ export const db = {
   },
 
   /**
-   * Delete Attendance Record
+   * Delete Attendance Record — Always reads from Google Sheets first to prevent cold-start resets
    */
   async deleteAttendance(id: string): Promise<boolean> {
+    const records = (await this.getAttendance()).filter((a) => a.id !== id);
     const localData = await ensureLocalDb();
-    localData.attendance = localData.attendance.filter((a) => a.id !== id);
+    localData.attendance = records;
     saveLocalDb(localData);
 
     const client = getGoogleSheetsClient();
     if (client) {
       try {
-        const values = localData.attendance.map((a) => [
+        const values = records.map((a) => [
           a.id,
           a.attendance_key,
           a.attendance_date,
@@ -550,7 +576,7 @@ export const db = {
           range: 'Leave_Requests!A2:P',
         });
         const rows = res.data.values || [];
-        return rows.map((r) => ({
+        const requests = rows.map((r) => ({
           id: r[0] || '',
           driver_id: r[1] || '',
           driver_name: r[2] || '',
@@ -568,6 +594,11 @@ export const db = {
           created_at: r[14] || '',
           updated_at: r[15] || '',
         }));
+
+        if (memoryDbCache) {
+          memoryDbCache.leave_requests = requests;
+        }
+        return requests;
       } catch (err) {
         console.error('Google Sheets read error (Leave_Requests):', err);
       }
@@ -578,22 +609,25 @@ export const db = {
   },
 
   /**
-   * Save Leave Request
+   * Save Leave Request — Always reads from Google Sheets first to prevent cold-start resets
    */
   async saveLeaveRequest(item: LeaveRequest): Promise<LeaveRequest> {
-    const localData = await ensureLocalDb();
-    const idx = localData.leave_requests.findIndex((l) => l.id === item.id);
+    const requests = await this.getLeaveRequests();
+    const idx = requests.findIndex((l) => l.id === item.id);
     if (idx >= 0) {
-      localData.leave_requests[idx] = item;
+      requests[idx] = item;
     } else {
-      localData.leave_requests.push(item);
+      requests.push(item);
     }
+
+    const localData = await ensureLocalDb();
+    localData.leave_requests = requests;
     saveLocalDb(localData);
 
     const client = getGoogleSheetsClient();
     if (client) {
       try {
-        const values = localData.leave_requests.map((l) => [
+        const values = requests.map((l) => [
           l.id,
           l.driver_id,
           l.driver_name,
