@@ -27,8 +27,6 @@ export const DEFAULT_SETTINGS: AppSettings = {
 // Generated bcrypt hash for "123456"
 const DEFAULT_PIN_HASH = '$2a$10$r9ZfFhA6E6f5S5c.pU2s7eO0S0I0d4x9Y8Z7A6B5C4D3E2F1G0H1I'; // bcrypt hash for 123456
 
-const LOCAL_DB_PATH = path.join(process.cwd(), 'data', 'db.json');
-
 interface DBData {
   users: User[];
   attendance: Attendance[];
@@ -162,37 +160,67 @@ function getGoogleSheetsClient() {
   }
 }
 
+let memoryDbCache: DBData | null = null;
+
+function getDbFilePath(): string {
+  if (process.env.VERCEL || process.env.NODE_ENV === 'production') {
+    return path.join('/tmp', 'absen_cabo_db.json');
+  }
+  return path.join(process.cwd(), 'data', 'db.json');
+}
+
 /**
  * Ensures local DB file exists with initial data
  */
 async function ensureLocalDb(): Promise<DBData> {
-  const dir = path.dirname(LOCAL_DB_PATH);
-  if (!fs.existsSync(dir)) {
-    fs.mkdirSync(dir, { recursive: true });
+  if (memoryDbCache) {
+    return memoryDbCache;
   }
 
-  if (!fs.existsSync(LOCAL_DB_PATH)) {
-    const initialData = await getDefaultSeedData();
-    fs.writeFileSync(LOCAL_DB_PATH, JSON.stringify(initialData, null, 2), 'utf8');
-    return initialData;
+  const dbPath = getDbFilePath();
+  try {
+    const dir = path.dirname(dbPath);
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir, { recursive: true });
+    }
+
+    if (fs.existsSync(dbPath)) {
+      const raw = fs.readFileSync(dbPath, 'utf8');
+      memoryDbCache = JSON.parse(raw);
+      return memoryDbCache!;
+    }
+  } catch (err) {
+    console.warn('File system read/mkdir warning, using memory seed:', err);
   }
+
+  const initialData = await getDefaultSeedData();
+  memoryDbCache = initialData;
 
   try {
-    const raw = fs.readFileSync(LOCAL_DB_PATH, 'utf8');
-    return JSON.parse(raw);
-  } catch {
-    const initialData = await getDefaultSeedData();
-    fs.writeFileSync(LOCAL_DB_PATH, JSON.stringify(initialData, null, 2), 'utf8');
-    return initialData;
+    const dir = path.dirname(dbPath);
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir, { recursive: true });
+    }
+    fs.writeFileSync(dbPath, JSON.stringify(initialData, null, 2), 'utf8');
+  } catch (err) {
+    console.warn('File system write warning (read-only environment):', err);
   }
+
+  return memoryDbCache;
 }
 
 function saveLocalDb(data: DBData) {
-  const dir = path.dirname(LOCAL_DB_PATH);
-  if (!fs.existsSync(dir)) {
-    fs.mkdirSync(dir, { recursive: true });
+  memoryDbCache = data;
+  try {
+    const dbPath = getDbFilePath();
+    const dir = path.dirname(dbPath);
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir, { recursive: true });
+    }
+    fs.writeFileSync(dbPath, JSON.stringify(data, null, 2), 'utf8');
+  } catch (err) {
+    console.warn('File system saveLocalDb warning (read-only environment):', err);
   }
-  fs.writeFileSync(LOCAL_DB_PATH, JSON.stringify(data, null, 2), 'utf8');
 }
 
 // ----------------------------------------------------
