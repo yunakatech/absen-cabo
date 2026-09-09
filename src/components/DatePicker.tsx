@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Calendar, RotateCcw } from 'lucide-react';
+import { RotateCcw } from 'lucide-react';
 
 interface DatePickerProps {
   label?: string;
@@ -14,12 +14,13 @@ interface DatePickerProps {
   className?: string;
 }
 
-function getTodayStr(): string {
-  const d = new Date();
-  const year = d.getFullYear();
-  const month = String(d.getMonth() + 1).padStart(2, '0');
-  const day = String(d.getDate()).padStart(2, '0');
-  return `${year}-${month}-${day}`;
+function getTodayWITA(): string {
+  return new Intl.DateTimeFormat('en-CA', {
+    timeZone: 'Asia/Makassar',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  }).format(new Date()); // returns YYYY-MM-DD
 }
 
 function formatDisplayDate(dateStr: string): string {
@@ -49,9 +50,8 @@ export default function DatePicker({
   min,
   className = '',
 }: DatePickerProps) {
-  const today = getTodayStr();
+  const today = getTodayWITA();
   const isToday = value === today;
-  const inputId = React.useId();
 
   const handleReset = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -62,43 +62,58 @@ export default function DatePicker({
   return (
     <div className={`flex flex-col gap-1 ${className}`}>
       {label && (
-        <label
-          htmlFor={inputId}
-          className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider cursor-pointer"
-        >
+        <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-0.5">
           {label}
         </label>
       )}
 
       <div className="flex items-center gap-2">
-        {/* Wrapper label triggers the native input on click */}
-        <label
-          htmlFor={inputId}
-          className="relative flex items-center gap-2.5 px-3.5 py-2.5 bg-slate-800 border border-slate-700 rounded-xl text-white text-xs font-medium hover:border-orange-500/60 hover:bg-slate-700/80 transition-all min-w-[180px] cursor-pointer select-none"
-        >
-          <Calendar size={14} className="text-orange-400 flex-shrink-0" />
-          <span
-            className={`flex-1 text-left ${
-              !value ? 'text-slate-500' : isToday ? 'text-orange-300 font-semibold' : 'text-white'
-            }`}
+        {/* Native date input styled to look custom */}
+        <div className="relative">
+          {/* Visual overlay (pointer-events-none so the input below is clickable) */}
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-0 flex items-center gap-2.5 px-3.5 rounded-xl z-10"
           >
-            {value ? (
-              <>
-                {formatDisplayDate(value)}
-                {isToday && (
-                  <span className="ml-1.5 px-1.5 py-0.5 bg-orange-500/20 text-orange-400 text-[9px] font-black rounded-md">
-                    HARI INI
-                  </span>
-                )}
-              </>
-            ) : (
-              placeholder
-            )}
-          </span>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="text-orange-400 flex-shrink-0"
+            >
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+              <line x1="16" y1="2" x2="16" y2="6" />
+              <line x1="8" y1="2" x2="8" y2="6" />
+              <line x1="3" y1="10" x2="21" y2="10" />
+            </svg>
+            <span
+              className={`text-xs font-medium ${
+                !value ? 'text-slate-400' : isToday ? 'text-orange-300 font-semibold' : 'text-white'
+              }`}
+            >
+              {value ? (
+                <>
+                  {formatDisplayDate(value)}
+                  {isToday && (
+                    <span className="ml-1.5 px-1.5 py-0.5 bg-orange-500/20 text-orange-400 text-[9px] font-black rounded-md">
+                      HARI INI
+                    </span>
+                  )}
+                </>
+              ) : (
+                <span className="text-slate-500">{placeholder}</span>
+              )}
+            </span>
+          </div>
 
-          {/* Actual date input — invisible but receives the click via label */}
+          {/* Real native date input — sits on top of visual overlay, transparent text/bg */}
           <input
-            id={inputId}
             type="date"
             value={value || ''}
             onChange={(e) => {
@@ -111,13 +126,14 @@ export default function DatePicker({
             }}
             max={max}
             min={min}
-            className="absolute w-px h-px opacity-0 pointer-events-none"
-            tabIndex={-1}
-            aria-hidden="true"
+            className="relative z-20 w-full min-w-[195px] py-2.5 pl-10 pr-3 bg-slate-800 border border-slate-700 rounded-xl text-transparent cursor-pointer hover:border-orange-500/60 hover:bg-slate-700/80 transition-all focus:outline-none focus:ring-2 focus:ring-orange-500/40 focus:border-orange-500 [color-scheme:dark]"
+            style={{
+              colorScheme: 'dark',
+            }}
           />
-        </label>
+        </div>
 
-        {/* Reset to Today button — completely outside the label */}
+        {/* Reset to Today button */}
         {!isToday && (
           <button
             type="button"
