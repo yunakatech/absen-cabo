@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
@@ -88,21 +88,36 @@ export default function LoginPage() {
           {/* Phone Field */}
           <div>
             <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">
-              Nomor HP
+              Nomor HP (WhatsApp)
             </label>
-            <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400">
-                <Phone size={20} />
+            <div className="relative flex items-center">
+              {/* Static Country Code Label */}
+              <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 gap-1.5">
+                <Phone size={18} className="text-orange-400 shrink-0" />
+                <span className="font-extrabold text-slate-200 text-sm border-r border-slate-700 pr-2.5">
+                  +62
+                </span>
               </div>
               <input
                 type="tel"
                 value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-                placeholder="Contoh: 08133333333"
-                className="w-full pl-11 pr-4 py-3.5 bg-slate-800/80 border border-slate-700 rounded-2xl text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent text-base tracking-wide transition"
+                onChange={(e) => {
+                  let val = e.target.value.replace(/\D/g, '');
+                  if (val.startsWith('0')) {
+                    val = val.substring(1);
+                  } else if (val.startsWith('62')) {
+                    val = val.substring(2);
+                  }
+                  setPhone(val);
+                }}
+                placeholder="8133333333"
+                className="w-full pl-[92px] pr-4 py-3.5 bg-slate-800/80 border border-slate-700 rounded-2xl text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent text-base font-semibold tracking-wide transition"
                 required
               />
             </div>
+            <p className="text-[11px] text-slate-500 mt-1.5 pl-1">
+              Masukkan nomor tanpa angka 0 di awal (contoh: 8133333333)
+            </p>
           </div>
 
           {/* PIN Field */}
@@ -164,32 +179,32 @@ export default function LoginPage() {
           <div className="grid grid-cols-3 gap-2">
             <button
               type="button"
-              onClick={() => quickLogin('08133333333', '123456')}
+              onClick={() => quickLogin('8133333333', '123456')}
               className="py-2.5 px-2 bg-slate-800/60 hover:bg-slate-800 border border-slate-700/60 rounded-xl text-center transition group"
             >
               <Truck size={18} className="mx-auto text-orange-400 mb-1 group-hover:scale-110 transition-transform" />
               <span className="block text-[11px] font-bold text-slate-200">Driver</span>
-              <span className="block text-[9px] text-slate-400">Pak Budi</span>
+              <span className="block text-[9px] text-slate-400">8133333333</span>
             </button>
 
             <button
               type="button"
-              onClick={() => quickLogin('08122222222', '123456')}
+              onClick={() => quickLogin('8122222222', '123456')}
               className="py-2.5 px-2 bg-slate-800/60 hover:bg-slate-800 border border-slate-700/60 rounded-xl text-center transition group"
             >
               <UserCheck size={18} className="mx-auto text-blue-400 mb-1 group-hover:scale-110 transition-transform" />
               <span className="block text-[11px] font-bold text-slate-200">Supervisor</span>
-              <span className="block text-[9px] text-slate-400">Pak Ahmad</span>
+              <span className="block text-[9px] text-slate-400">8122222222</span>
             </button>
 
             <button
               type="button"
-              onClick={() => quickLogin('08111111111', '123456')}
+              onClick={() => quickLogin('8111111111', '123456')}
               className="py-2.5 px-2 bg-slate-800/60 hover:bg-slate-800 border border-slate-700/60 rounded-xl text-center transition group"
             >
               <ShieldCheck size={18} className="mx-auto text-purple-400 mb-1 group-hover:scale-110 transition-transform" />
               <span className="block text-[11px] font-bold text-slate-200">Admin</span>
-              <span className="block text-[9px] text-slate-400">Utama</span>
+              <span className="block text-[9px] text-slate-400">8111111111</span>
             </button>
           </div>
           <p className="text-[10px] text-slate-500 text-center mt-2">PIN Default: 123456</p>

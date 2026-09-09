@@ -269,11 +269,22 @@ export const db = {
   },
 
   /**
-   * Get User by Phone
+   * Get User by Phone (Supports +62, 62, 08xx, or 8xx formats)
    */
   async getUserByPhone(phone: string): Promise<User | null> {
     const users = await this.getUsers();
-    return users.find((u) => u.phone === phone) || null;
+    const normalize = (p: string) => {
+      let cleaned = (p || '').replace(/\D/g, '');
+      if (cleaned.startsWith('62')) {
+        cleaned = '0' + cleaned.substring(2);
+      } else if (!cleaned.startsWith('0')) {
+        cleaned = '0' + cleaned;
+      }
+      return cleaned;
+    };
+
+    const target = normalize(phone);
+    return users.find((u) => normalize(u.phone) === target) || null;
   },
 
   /**
