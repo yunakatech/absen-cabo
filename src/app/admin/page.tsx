@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import React, { useEffect, useState, useCallback } from 'react';
 import Link from 'next/link';
@@ -106,32 +106,44 @@ export default function AdminDashboard() {
           <p className="text-3xl font-black text-white">{stats?.totalDrivers ?? 0}</p>
         </div>
 
-        {/* Sudah Absen */}
-        <div className="bg-slate-900/90 border border-orange-900/40 rounded-2xl p-5 shadow-lg">
+        {/* Sudah Absen — clickable shortcut */}
+        <Link
+          href="/admin/absensi?status=HADIR"
+          className="bg-slate-900/90 border border-orange-900/40 rounded-2xl p-5 shadow-lg hover:border-orange-500/60 hover:bg-orange-500/5 transition cursor-pointer group block"
+        >
           <div className="flex items-center justify-between text-orange-400 mb-2">
             <span className="text-xs font-bold uppercase tracking-wider">Sudah Absen</span>
             <CheckCircle2 size={18} />
           </div>
           <p className="text-3xl font-black text-orange-400">{stats?.sudahAbsen ?? 0}</p>
-        </div>
+          <p className="text-[10px] text-slate-500 mt-1 group-hover:text-orange-400 transition">Lihat Detail →</p>
+        </Link>
 
-        {/* Belum Absen */}
-        <div className="bg-slate-900/90 border border-rose-900/40 rounded-2xl p-5 shadow-lg">
+        {/* Belum Absen — clickable shortcut */}
+        <Link
+          href="/admin/absensi?status=BELUM_ABSEN"
+          className="bg-slate-900/90 border border-rose-900/40 rounded-2xl p-5 shadow-lg hover:border-rose-500/60 hover:bg-rose-500/5 transition cursor-pointer group block"
+        >
           <div className="flex items-center justify-between text-rose-400 mb-2">
             <span className="text-xs font-bold uppercase tracking-wider">Belum Absen</span>
             <XCircle size={18} />
           </div>
           <p className="text-3xl font-black text-rose-400">{stats?.belumAbsen ?? 0}</p>
-        </div>
+          <p className="text-[10px] text-slate-500 mt-1 group-hover:text-rose-400 transition">Lihat Detail →</p>
+        </Link>
 
-        {/* Izin Disetujui */}
-        <div className="bg-slate-900/90 border border-amber-900/40 rounded-2xl p-5 shadow-lg">
+        {/* Izin Disetujui — clickable shortcut */}
+        <Link
+          href="/admin/absensi?status=IZIN"
+          className="bg-slate-900/90 border border-amber-900/40 rounded-2xl p-5 shadow-lg hover:border-amber-500/60 hover:bg-amber-500/5 transition cursor-pointer group block"
+        >
           <div className="flex items-center justify-between text-amber-400 mb-2">
             <span className="text-xs font-bold uppercase tracking-wider">Izin Disetujui</span>
             <FileText size={18} />
           </div>
           <p className="text-3xl font-black text-amber-400">{stats?.izinDisetujui ?? 0}</p>
-        </div>
+          <p className="text-[10px] text-slate-500 mt-1 group-hover:text-amber-400 transition">Lihat Detail →</p>
+        </Link>
 
         {/* Izin Menunggu */}
         <div className="bg-slate-900/90 border border-blue-900/40 rounded-2xl p-5 shadow-lg col-span-2 sm:col-span-1">
@@ -247,10 +259,10 @@ export default function AdminDashboard() {
           </div>
 
           <Link
-            href="/admin/absensi"
+            href="/admin/absensi?status=BELUM_ABSEN"
             className="mt-4 text-center block text-xs font-bold text-orange-400 hover:text-orange-300 transition"
           >
-            Lihat Tabel Absensi &rarr;
+            Lihat Semua Yang Belum Absen &rarr;
           </Link>
         </div>
       </div>
