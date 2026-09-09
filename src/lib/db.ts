@@ -598,9 +598,32 @@ export const db = {
   },
 
   /**
-   * Fetch Settings
+   * Fetch Settings — uses in-memory cache first, then Google Sheets fallback
    */
   async getSettings(): Promise<AppSettings> {
+    // 1. Prefer in-memory cached settings (survives within same serverless invocation)
+    if (memoryDbCache && Object.keys(memoryDbCache.settings).length > 0) {
+      const s = memoryDbCache.settings;
+      return {
+        company_name: s.company_name ?? DEFAULT_SETTINGS.company_name,
+        timezone: s.timezone ?? DEFAULT_SETTINGS.timezone,
+        attendance_enabled: s.attendance_enabled === 'true',
+        attendance_start_time: s.attendance_start_time ?? DEFAULT_SETTINGS.attendance_start_time,
+        attendance_end_time: s.attendance_end_time ?? DEFAULT_SETTINGS.attendance_end_time,
+        require_gps: s.require_gps === 'true',
+        leave_enabled: s.leave_enabled === 'true',
+        leave_reason_required: s.leave_reason_required === 'true',
+        monday_enabled: s.monday_enabled !== 'false',
+        tuesday_enabled: s.tuesday_enabled !== 'false',
+        wednesday_enabled: s.wednesday_enabled !== 'false',
+        thursday_enabled: s.thursday_enabled !== 'false',
+        friday_enabled: s.friday_enabled !== 'false',
+        saturday_enabled: s.saturday_enabled !== 'false',
+        sunday_enabled: s.sunday_enabled === 'true',
+      };
+    }
+
+    // 2. Try Google Sheets
     const client = getGoogleSheetsClient();
     let rawSettings: Record<string, string> = {};
 
@@ -619,9 +642,15 @@ export const db = {
       }
     }
 
+    // 3. Fallback: local/memory DB
     if (Object.keys(rawSettings).length === 0) {
       const localData = await ensureLocalDb();
       rawSettings = localData.settings;
+    } else {
+      // Update in-memory cache with what we read from Sheets so subsequent calls are fast
+      const localData = await ensureLocalDb();
+      localData.settings = rawSettings;
+      memoryDbCache = localData;
     }
 
     return {
@@ -644,10 +673,9 @@ export const db = {
   },
 
   /**
-   * Save Settings
+   * Save Settings — writes to in-memory cache first, then syncs to Google Sheets
    */
   async saveSettings(settings: AppSettings): Promise<AppSettings> {
-    const localData = await ensureLocalDb();
     const settingsMap: Record<string, string> = {
       company_name: settings.company_name,
       timezone: settings.timezone,
@@ -666,9 +694,13 @@ export const db = {
       sunday_enabled: String(settings.sunday_enabled),
     };
 
+    // Always update in-memory cache immediately so subsequent reads get the new values
+    const localData = await ensureLocalDb();
     localData.settings = settingsMap;
+    memoryDbCache = localData;
     saveLocalDb(localData);
 
+    // Sync to Google Sheets asynchronously (don't wait/block on failure)
     const client = getGoogleSheetsClient();
     if (client) {
       try {
@@ -679,8 +711,9 @@ export const db = {
           valueInputOption: 'USER_ENTERED',
           requestBody: { values },
         });
+        console.log('Settings synced to Google Sheets successfully');
       } catch (err) {
-        console.error('Google Sheets sync error (saveSettings):', err);
+        console.error('Google Sheets sync error (saveSettings) — settings saved in memory:', err);
       }
     }
 
