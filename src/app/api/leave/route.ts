@@ -90,6 +90,27 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    const targetEndDate = end_date || start_date;
+
+    // Check if driver already has an attendance record for any date in the leave range
+    const allAttendance = await db.getAttendance();
+    const existingAtt = allAttendance.find(
+      (a) =>
+        a.driver_id === session.userId &&
+        a.attendance_date >= start_date &&
+        a.attendance_date <= targetEndDate
+    );
+
+    if (existingAtt) {
+      return NextResponse.json(
+        {
+          success: false,
+          message: `Anda telah mengisi absensi pada tanggal ${existingAtt.attendance_date}. Tidak dapat mengajukan izin pada tanggal yang sudah diisi absensi.`,
+        },
+        { status: 400 }
+      );
+    }
+
     const user = await db.getUserById(session.userId);
     const supervisorId = user?.supervisor_id || session.supervisorId || '';
 

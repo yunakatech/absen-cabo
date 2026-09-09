@@ -44,6 +44,25 @@ export async function PUT(
     };
 
     if (action === 'APPROVE') {
+      // Check if driver has an existing attendance record in the leave period
+      const allAttendance = await db.getAttendance();
+      const existingAtt = allAttendance.find(
+        (a) =>
+          a.driver_id === existing.driver_id &&
+          a.attendance_date >= existing.start_date &&
+          a.attendance_date <= existing.end_date
+      );
+
+      if (existingAtt) {
+        return NextResponse.json(
+          {
+            success: false,
+            message: `Driver ${existing.driver_name} sudah melakukan absensi pada tanggal ${existingAtt.attendance_date}. Izin tidak dapat disetujui.`,
+          },
+          { status: 400 }
+        );
+      }
+
       updated.approved_by = session.name;
       updated.approved_at = nowIso;
     } else {

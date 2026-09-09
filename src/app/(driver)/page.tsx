@@ -195,10 +195,10 @@ export default function DriverHomePage() {
   // Determine state 1 to 7
   let stateNum = 2; // Default OPEN
 
-  if (approvedLeave) {
-    stateNum = 6; // STATE 6 — Izin Disetujui
-  } else if (todayAttendance) {
+  if (todayAttendance) {
     stateNum = 3; // STATE 3 — Sudah Absen
+  } else if (approvedLeave) {
+    stateNum = 6; // STATE 6 — Izin Disetujui
   } else if (settings && !settings.attendance_enabled) {
     stateNum = 5; // STATE 5 — Absensi Dinonaktifkan Admin
   } else if (!isTodayWorkDay) {

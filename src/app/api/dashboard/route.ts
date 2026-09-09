@@ -35,9 +35,13 @@ export async function GET(req: NextRequest) {
     const attendedDriverIds = new Set(todayAttendance.map((a) => a.driver_id));
     const sudahAbsenCount = attendedDriverIds.size;
 
-    // Today's approved leave
+    // Today's approved leave (excluding drivers who already attended today to prevent double-counting)
     const todayApprovedLeave = leaveRequests.filter(
-      (l) => l.status === 'APPROVED' && l.start_date <= today && l.end_date >= today
+      (l) =>
+        l.status === 'APPROVED' &&
+        l.start_date <= today &&
+        l.end_date >= today &&
+        !attendedDriverIds.has(l.driver_id)
     );
     const leaveApprovedDriverIds = new Set(todayApprovedLeave.map((l) => l.driver_id));
     const izinDisetujuiCount = leaveApprovedDriverIds.size;

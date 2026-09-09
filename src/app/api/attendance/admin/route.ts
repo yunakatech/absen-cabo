@@ -42,6 +42,26 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    // Check if driver has an approved leave on this date
+    const allLeave = await db.getLeaveRequests();
+    const approvedLeaveToday = allLeave.find(
+      (l) =>
+        l.driver_id === driver_id &&
+        l.status === 'APPROVED' &&
+        l.start_date <= attendance_date &&
+        l.end_date >= attendance_date
+    );
+
+    if (approvedLeaveToday) {
+      return NextResponse.json(
+        {
+          success: false,
+          message: `Driver ${driver.name} memiliki Izin Disetujui (${approvedLeaveToday.leave_type}) pada tanggal tersebut. Hapus/batalkan izin terlebih dahulu jika ingin memasukkan absensi.`,
+        },
+        { status: 400 }
+      );
+    }
+
     const nowIso = new Date().toISOString();
     const newRecord: Attendance = {
       id: 'att_' + Date.now() + '_' + Math.random().toString(36).substring(2, 7),
