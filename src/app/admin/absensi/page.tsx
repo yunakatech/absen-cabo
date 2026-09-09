@@ -40,6 +40,7 @@ interface DriverOption {
   id: string;
   name: string;
   employee_code: string;
+  supervisor_id?: string;
   phone?: string;
 }
 
@@ -59,6 +60,7 @@ export default function AdminAttendancePage() {
 
   const [attendance, setAttendance] = useState<AttendanceRecord[]>([]);
   const [drivers, setDrivers] = useState<DriverOption[]>([]);
+  const [supervisors, setSupervisors] = useState<DriverOption[]>([]);
   const [leaveRequests, setLeaveRequests] = useState<LeaveRequest[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -99,14 +101,16 @@ export default function AdminAttendancePage() {
     try {
       setLoading(true);
       const attUrl = filterDate ? `/api/attendance?date=${filterDate}` : '/api/attendance';
-      const [resAtt, resDr, resLeave] = await Promise.all([
+      const [resAtt, resDr, resSup, resLeave] = await Promise.all([
         fetch(attUrl).then((r) => r.json()),
         fetch('/api/users?role=DRIVER').then((r) => r.json()),
+        fetch('/api/users?role=SUPERVISOR').then((r) => r.json()),
         fetch('/api/leave').then((r) => r.json()),
       ]);
 
       if (resAtt.success) setAttendance(resAtt.attendance);
       if (resDr.success) setDrivers(resDr.users);
+      if (resSup.success) setSupervisors(resSup.users);
       if (resLeave.success) setLeaveRequests(resLeave.requests);
     } catch (err) {
       console.error('Error fetching data:', err);
@@ -118,6 +122,9 @@ export default function AdminAttendancePage() {
   useEffect(() => {
     fetchAll();
   }, [fetchAll]);
+
+  // Supervisor Lookup Map
+  const supervisorMap = new Map(supervisors.map((s) => [s.id, s.name]));
 
   /* ─── Synthetic driver status rows ─────────────────── */
   const driverStatusRows: DriverStatusRow[] = drivers.map((driver) => {
@@ -268,7 +275,13 @@ export default function AdminAttendancePage() {
     const rows = exportRows.map((r, i) => {
       const a = r.attendance!;
       const gmaps = a.latitude && a.longitude ? `https://www.google.com/maps?q=${a.latitude},${a.longitude}` : '-';
-      return [i+1, a.attendance_date, a.attendance_time, `"${a.driver_name}"`, `"${a.supervisor_name || '-'}"`, a.status, a.source, a.latitude||'-', a.longitude||'-', `"${gmaps}"`];
+      const supName =
+        a.supervisor_name && a.supervisor_name !== '-'
+          ? a.supervisor_name
+          : r.driver.supervisor_id
+          ? supervisorMap.get(r.driver.supervisor_id) || '-'
+          : '-';
+      return [i+1, a.attendance_date, a.attendance_time, `"${a.driver_name}"`, `"${supName}"`, a.status, a.source, a.latitude||'-', a.longitude||'-', `"${gmaps}"`];
     });
     const csv = '\uFEFF' + [headers.join(','), ...rows.map((r) => r.join(','))].join('\n');
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
@@ -460,8 +473,12 @@ export default function AdminAttendancePage() {
                         )}
                       </td>
                       {/* Supervisor */}
-                      <td className="px-6 py-4 text-slate-400">
-                        {a?.supervisor_name || '—'}
+                      <td className="px-6 py-4 text-slate-300 font-medium">
+                        {a?.supervisor_name && a.supervisor_name !== '-'
+                          ? a.supervisor_name
+                          : row.driver.supervisor_id
+                          ? supervisorMap.get(row.driver.supervisor_id) || '—'
+                          : '—'}
                       </td>
                       {/* Source / Info */}
                       <td className="px-6 py-4">
