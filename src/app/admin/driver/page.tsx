@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import React, { useEffect, useState, useCallback } from 'react';
 import { Plus, Edit2, UserX, Trash2, Search, Truck, Phone, Lock, UserCheck } from 'lucide-react';
@@ -196,7 +196,7 @@ export default function AdminDriverPage() {
           className="px-4 py-2.5 bg-orange-500 hover:bg-orange-400 text-slate-950 font-bold text-sm rounded-xl shadow-lg shadow-orange-500/20 flex items-center justify-center gap-2 transition"
         >
           <Plus size={18} />
-          <span>+ TAMBAH DRIVER</span>
+          <span>TAMBAH DRIVER</span>
         </button>
       </div>
 

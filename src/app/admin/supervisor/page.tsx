@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import React, { useEffect, useState, useCallback } from 'react';
 import { Plus, Edit2, UserX, Search, UserCheck } from 'lucide-react';
@@ -181,7 +181,7 @@ export default function AdminSupervisorPage() {
           className="px-4 py-2.5 bg-blue-500 hover:bg-blue-400 text-slate-950 font-bold text-sm rounded-xl shadow-lg shadow-blue-500/20 flex items-center justify-center gap-2 transition"
         >
           <Plus size={18} />
-          <span>+ TAMBAH SUPERVISOR</span>
+          <span>TAMBAH SUPERVISOR</span>
         </button>
       </div>
 

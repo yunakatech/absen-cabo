@@ -318,7 +318,7 @@ export default function AdminAttendancePage() {
             className="px-4 py-2.5 bg-orange-500 hover:bg-orange-400 text-slate-950 font-bold text-sm rounded-xl shadow-lg shadow-orange-500/20 flex items-center justify-center gap-2 transition"
           >
             <Plus size={18} />
-            <span>+ ABSENSI MANUAL</span>
+            <span>ABSENSI MANUAL</span>
           </button>
         </div>
       </div>
