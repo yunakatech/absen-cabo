@@ -1,7 +1,8 @@
-﻿'use client';
+'use client';
 
 import React, { useEffect, useState, useCallback } from 'react';
 import { ShieldAlert, RefreshCw, Search } from 'lucide-react';
+import Pagination from '@/components/Pagination';
 import { formatIndonesianDate } from '@/lib/time';
 
 interface AuditLogItem {
@@ -19,6 +20,10 @@ export default function AdminAuditLogPage() {
   const [logs, setLogs] = useState<AuditLogItem[]>([]);
   const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(true);
+
+  // Pagination
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
 
   const fetchLogs = useCallback(async () => {
     try {
@@ -44,6 +49,9 @@ export default function AdminAuditLogPage() {
       l.target?.toLowerCase().includes(search.toLowerCase()) ||
       l.details?.toLowerCase().includes(search.toLowerCase())
   );
+
+  const totalPages = Math.ceil(filteredLogs.length / pageSize);
+  const paginatedLogs = filteredLogs.slice((currentPage - 1) * pageSize, currentPage * pageSize);
 
   return (
     <div className="space-y-6">
@@ -107,7 +115,7 @@ export default function AdminAuditLogPage() {
                   </td>
                 </tr>
               ) : (
-                filteredLogs.map((log) => (
+                paginatedLogs.map((log) => (
                   <tr key={log.id} className="hover:bg-slate-800/40 transition">
                     <td className="px-6 py-4 text-slate-400 whitespace-nowrap">
                       {log.timestamp ? log.timestamp.substring(0, 19).replace('T', ' ') : '-'}
@@ -133,6 +141,16 @@ export default function AdminAuditLogPage() {
             </tbody>
           </table>
         </div>
+
+        {/* Pagination */}
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          pageSize={pageSize}
+          totalItems={filteredLogs.length}
+          onPageChange={setCurrentPage}
+          onPageSizeChange={setPageSize}
+        />
       </div>
     </div>
   );

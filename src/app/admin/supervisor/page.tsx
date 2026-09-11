@@ -5,6 +5,7 @@ import { Plus, Edit2, UserX, Search, UserCheck } from 'lucide-react';
 import toast from 'react-hot-toast';
 import StatusBadge from '@/components/StatusBadge';
 import ConfirmModal from '@/components/ConfirmModal';
+import Pagination from '@/components/Pagination';
 
 interface UserItem {
   id: string;
@@ -19,6 +20,10 @@ export default function AdminSupervisorPage() {
   const [supervisors, setSupervisors] = useState<UserItem[]>([]);
   const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(true);
+
+  // Pagination
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
 
   // Modal states
   const [isAddOpen, setIsAddOpen] = useState(false);
@@ -167,6 +172,9 @@ export default function AdminSupervisorPage() {
       s.phone.includes(search)
   );
 
+  const totalPages = Math.ceil(filtered.length / pageSize);
+  const paginatedSupervisors = filtered.slice((currentPage - 1) * pageSize, currentPage * pageSize);
+
   return (
     <div className="space-y-6">
       {/* Header & Controls */}
@@ -226,7 +234,7 @@ export default function AdminSupervisorPage() {
                   </td>
                 </tr>
               ) : (
-                filtered.map((s) => (
+                paginatedSupervisors.map((s) => (
                   <tr key={s.id} className="hover:bg-slate-800/40 transition">
                     <td className="px-6 py-4 font-mono font-bold text-blue-400">
                       {s.employee_code}
@@ -258,6 +266,16 @@ export default function AdminSupervisorPage() {
             </tbody>
           </table>
         </div>
+
+        {/* Pagination */}
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          pageSize={pageSize}
+          totalItems={filtered.length}
+          onPageChange={setCurrentPage}
+          onPageSizeChange={setPageSize}
+        />
       </div>
 
       {/* Add / Edit Modal */}

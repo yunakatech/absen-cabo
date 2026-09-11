@@ -5,6 +5,7 @@ import { Plus, Edit2, UserX, Trash2, Search, Truck, Phone, Lock, UserCheck } fro
 import toast from 'react-hot-toast';
 import StatusBadge from '@/components/StatusBadge';
 import ConfirmModal from '@/components/ConfirmModal';
+import Pagination from '@/components/Pagination';
 
 interface UserItem {
   id: string;
@@ -21,6 +22,10 @@ export default function AdminDriverPage() {
   const [supervisors, setSupervisors] = useState<UserItem[]>([]);
   const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(true);
+
+  // Pagination
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
 
   // Modal states
   const [isAddOpen, setIsAddOpen] = useState(false);
@@ -176,6 +181,9 @@ export default function AdminDriverPage() {
       d.phone.includes(search)
   );
 
+  const totalPages = Math.ceil(filteredDrivers.length / pageSize);
+  const paginatedDrivers = filteredDrivers.slice((currentPage - 1) * pageSize, currentPage * pageSize);
+
   const getSupervisorName = (spvId?: string) => {
     if (!spvId) return '-';
     const s = supervisors.find((spv) => spv.id === spvId);
@@ -242,7 +250,7 @@ export default function AdminDriverPage() {
                   </td>
                 </tr>
               ) : (
-                filteredDrivers.map((d) => (
+                paginatedDrivers.map((d) => (
                   <tr key={d.id} className="hover:bg-slate-800/40 transition">
                     <td className="px-6 py-4 font-mono font-bold text-orange-400">
                       {d.employee_code}
@@ -277,6 +285,16 @@ export default function AdminDriverPage() {
             </tbody>
           </table>
         </div>
+
+        {/* Pagination */}
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          pageSize={pageSize}
+          totalItems={filteredDrivers.length}
+          onPageChange={setCurrentPage}
+          onPageSizeChange={setPageSize}
+        />
       </div>
 
       {/* Add / Edit Driver Modal */}

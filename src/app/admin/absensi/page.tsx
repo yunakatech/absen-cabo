@@ -7,6 +7,7 @@ import toast from 'react-hot-toast';
 import StatusBadge from '@/components/StatusBadge';
 import ConfirmModal from '@/components/ConfirmModal';
 import DatePicker from '@/components/DatePicker';
+import Pagination from '@/components/Pagination';
 import { formatIndonesianDate, getTodayWITA } from '@/lib/time';
 
 /* ─── Types ──────────────────────────────────────────── */
@@ -73,6 +74,10 @@ export default function AdminAttendancePage() {
   const [filterDriver, setFilterDriver] = useState('ALL');
   const [search, setSearch] = useState('');
   const [filterStatus, setFilterStatus] = useState<StatusFilter>('ALL');
+
+  // Pagination
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
 
   // Modals
   const [isAddOpen, setIsAddOpen] = useState(false);
@@ -180,6 +185,9 @@ export default function AdminAttendancePage() {
     }
     return true;
   });
+
+  const totalPages = Math.ceil(filteredRows.length / pageSize);
+  const paginatedRows = filteredRows.slice((currentPage - 1) * pageSize, currentPage * pageSize);
 
   // Count by status for badges
   const counts = {
@@ -458,7 +466,7 @@ export default function AdminAttendancePage() {
                   </td>
                 </tr>
               ) : (
-                filteredRows.map((row) => {
+                paginatedRows.map((row) => {
                   const a = row.attendance;
                   const l = row.leave;
                   return (
@@ -589,17 +597,15 @@ export default function AdminAttendancePage() {
             </tbody>
           </table>
         </div>
-        {/* Table Footer */}
-        <div className="px-6 py-3 border-t border-slate-800 flex items-center justify-between text-xs text-slate-500">
-          <span>
-            Menampilkan <strong className="text-white">{filteredRows.length}</strong> dari{' '}
-            <strong className="text-white">{driverStatusRows.length}</strong> driver
-          </span>
-          <span>
-            Tanggal:{' '}
-            <strong className="text-orange-400">{filterDate ? formatIndonesianDate(filterDate) : 'Semua'}</strong>
-          </span>
-        </div>
+        {/* Pagination */}
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          pageSize={pageSize}
+          totalItems={filteredRows.length}
+          onPageChange={setCurrentPage}
+          onPageSizeChange={setPageSize}
+        />
       </div>
 
       {/* Add / Edit Modal */}

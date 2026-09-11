@@ -5,6 +5,7 @@ import { Edit2, MapPin, RefreshCw, Download, CheckCircle2, XCircle } from 'lucid
 import toast from 'react-hot-toast';
 import StatusBadge from '@/components/StatusBadge';
 import DatePicker from '@/components/DatePicker';
+import Pagination from '@/components/Pagination';
 import { formatIndonesianDate, getTodayWITA } from '@/lib/time';
 
 interface AttendanceRecord {
@@ -27,6 +28,10 @@ export default function SupervisorAttendancePage() {
   const [loading, setLoading] = useState(true);
   const [filterDate, setFilterDate] = useState(todayStr);
   const [search, setSearch] = useState('');
+
+  // Pagination
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
 
   // Edit Modal State
   const [editItem, setEditItem] = useState<AttendanceRecord | null>(null);
@@ -85,6 +90,9 @@ export default function SupervisorAttendancePage() {
   const filteredRecords = attendance.filter((a) =>
     a.driver_name.toLowerCase().includes(search.toLowerCase())
   );
+
+  const totalPages = Math.ceil(filteredRecords.length / pageSize);
+  const paginatedRecords = filteredRecords.slice((currentPage - 1) * pageSize, currentPage * pageSize);
 
   return (
     <div className="space-y-6">
@@ -164,7 +172,7 @@ export default function SupervisorAttendancePage() {
                   </td>
                 </tr>
               ) : (
-                filteredRecords.map((a) => (
+                paginatedRecords.map((a) => (
                   <tr key={a.id} className="hover:bg-slate-800/40 transition">
                     <td className="px-6 py-4">
                       <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-orange-500/15 text-orange-400 text-xs font-bold">
@@ -220,6 +228,16 @@ export default function SupervisorAttendancePage() {
             </tbody>
           </table>
         </div>
+
+        {/* Pagination */}
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          pageSize={pageSize}
+          totalItems={filteredRecords.length}
+          onPageChange={setCurrentPage}
+          onPageSizeChange={setPageSize}
+        />
       </div>
 
       {/* Edit Duty Status Modal */}

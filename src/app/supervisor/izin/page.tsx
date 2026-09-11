@@ -4,6 +4,7 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { Check, X, Filter } from 'lucide-react';
 import toast from 'react-hot-toast';
 import StatusBadge from '@/components/StatusBadge';
+import Pagination from '@/components/Pagination';
 import { formatIndonesianDate } from '@/lib/time';
 
 interface LeaveRequestItem {
@@ -25,6 +26,10 @@ export default function SupervisorLeavePage() {
   const [statusFilter, setStatusFilter] = useState<string>('ALL');
   const [loading, setLoading] = useState(true);
   const [actionId, setActionId] = useState<string | null>(null);
+
+  // Pagination
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
 
   const fetchRequests = useCallback(async () => {
     try {
@@ -71,6 +76,9 @@ export default function SupervisorLeavePage() {
     }
   };
 
+  const totalPages = Math.ceil(requests.length / pageSize);
+  const paginatedRequests = requests.slice((currentPage - 1) * pageSize, currentPage * pageSize);
+
   return (
     <div className="space-y-6">
       {/* Header & Filter */}
@@ -108,7 +116,7 @@ export default function SupervisorLeavePage() {
         </div>
       ) : (
         <div className="space-y-3">
-          {requests.map((req) => (
+          {paginatedRequests.map((req) => (
             <div
               key={req.id}
               className="bg-slate-900/90 border border-slate-800 rounded-2xl p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-lg"
@@ -157,6 +165,18 @@ export default function SupervisorLeavePage() {
               )}
             </div>
           ))}
+
+          {/* Pagination */}
+          <div className="rounded-2xl overflow-hidden border border-slate-800">
+            <Pagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              pageSize={pageSize}
+              totalItems={requests.length}
+              onPageChange={setCurrentPage}
+              onPageSizeChange={setPageSize}
+            />
+          </div>
         </div>
       )}
     </div>
