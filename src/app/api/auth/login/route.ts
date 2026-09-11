@@ -5,7 +5,7 @@ import { verifyPin, createSessionToken, TOKEN_COOKIE_NAME } from '@/lib/auth';
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { phone, pin } = body;
+    const { phone, pin, remember = true } = body;
 
     if (!phone || !pin) {
       return NextResponse.json(
@@ -70,13 +70,15 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    // Set HTTP-only cookie valid for 30 days
+    // Set HTTP-only cookie (30 days if remember me is active, 1 day if inactive)
+    const maxAge = remember ? 30 * 24 * 60 * 60 : 24 * 60 * 60;
+
     response.cookies.set({
       name: TOKEN_COOKIE_NAME,
       value: token,
       httpOnly: true,
       path: '/',
-      maxAge: 30 * 24 * 60 * 60, // 30 days
+      maxAge,
       sameSite: 'lax',
       secure: process.env.NODE_ENV === 'production',
     });

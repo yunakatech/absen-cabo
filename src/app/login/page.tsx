@@ -1,16 +1,24 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Phone, Lock, Eye, EyeOff, LogIn, Truck, ShieldCheck, UserCheck } from 'lucide-react';
+import { Phone, Lock, Eye, EyeOff, LogIn, Truck, ShieldCheck, UserCheck, CheckCircle2 } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 export default function LoginPage() {
   const [phone, setPhone] = useState('');
   const [pin, setPin] = useState('');
+  const [rememberMe, setRememberMe] = useState(true);
   const [showPin, setShowPin] = useState(false);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+
+  useEffect(() => {
+    const savedPhone = localStorage.getItem('remembered_phone');
+    if (savedPhone) {
+      setPhone(savedPhone);
+    }
+  }, []);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -30,7 +38,7 @@ export default function LoginPage() {
       const res = await fetch('/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ phone, pin }),
+        body: JSON.stringify({ phone, pin, remember: rememberMe }),
       });
 
       const data = await res.json();
@@ -39,6 +47,12 @@ export default function LoginPage() {
         toast.error(data.message || 'Login gagal. Periksa Nomor HP & PIN.');
         setLoading(false);
         return;
+      }
+
+      if (rememberMe) {
+        localStorage.setItem('remembered_phone', phone.trim());
+      } else {
+        localStorage.removeItem('remembered_phone');
       }
 
       toast.success(`Selamat datang, ${data.user.name}!`);
@@ -145,6 +159,55 @@ export default function LoginPage() {
               >
                 {showPin ? <EyeOff size={20} /> : <Eye size={20} />}
               </button>
+            </div>
+          </div>
+
+          {/* Remember Me Radio Button UI */}
+          <div className="space-y-2 pt-1">
+            <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider">
+              Ingat Saya di Perangkat Ini
+            </label>
+            <div className="grid grid-cols-2 gap-2.5">
+              <label
+                onClick={() => setRememberMe(true)}
+                className={`flex items-center justify-between px-4 py-3 rounded-2xl border text-xs font-bold cursor-pointer transition-all ${
+                  rememberMe
+                    ? 'border-orange-500 bg-orange-500/15 text-orange-300 shadow-md shadow-orange-500/10'
+                    : 'border-slate-800 bg-slate-800/40 text-slate-400 hover:border-slate-700 hover:text-slate-300'
+                }`}
+              >
+                <div className="flex items-center gap-2">
+                  <input
+                    type="radio"
+                    name="rememberMe"
+                    checked={rememberMe}
+                    onChange={() => setRememberMe(true)}
+                    className="accent-orange-500 w-4 h-4 cursor-pointer"
+                  />
+                  <span>YA (AKTIF)</span>
+                </div>
+                {rememberMe && <CheckCircle2 size={16} className="text-orange-400 shrink-0" />}
+              </label>
+
+              <label
+                onClick={() => setRememberMe(false)}
+                className={`flex items-center justify-between px-4 py-3 rounded-2xl border text-xs font-bold cursor-pointer transition-all ${
+                  !rememberMe
+                    ? 'border-slate-600 bg-slate-800 text-slate-200 shadow-md'
+                    : 'border-slate-800 bg-slate-800/40 text-slate-400 hover:border-slate-700 hover:text-slate-300'
+                }`}
+              >
+                <div className="flex items-center gap-2">
+                  <input
+                    type="radio"
+                    name="rememberMe"
+                    checked={!rememberMe}
+                    onChange={() => setRememberMe(false)}
+                    className="accent-slate-400 w-4 h-4 cursor-pointer"
+                  />
+                  <span>TIDAK</span>
+                </div>
+              </label>
             </div>
           </div>
 
