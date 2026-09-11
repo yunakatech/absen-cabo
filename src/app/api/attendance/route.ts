@@ -143,7 +143,7 @@ export async function POST(req: NextRequest) {
 
     // 6. Check GPS requirement
     const body = await req.json().catch(() => ({}));
-    const { latitude = '', longitude = '', gps_accuracy = '', notes = '' } = body;
+    const { latitude = '', longitude = '', gps_accuracy = '', notes = '', duty_status = 'BERTUGAS' } = body;
 
     if (settings.require_gps && (!latitude || !longitude)) {
       return NextResponse.json(
@@ -190,6 +190,7 @@ export async function POST(req: NextRequest) {
       longitude: String(longitude),
       gps_accuracy: String(gps_accuracy),
       source: 'DRIVER',
+      duty_status: (['READY', 'BERTUGAS', 'MAINTENANCE'].includes(duty_status) ? duty_status : 'BERTUGAS') as Attendance['duty_status'],
       notes: notes || 'Absen Driver PWA',
       created_at: nowIso,
       updated_at: nowIso,

@@ -14,7 +14,7 @@ export async function POST(req: NextRequest) {
     }
 
     const body = await req.json();
-    const { driver_id, attendance_date, attendance_time, notes } = body;
+    const { driver_id, attendance_date, attendance_time, notes, duty_status = 'BERTUGAS' } = body;
 
     if (!driver_id || !attendance_date || !attendance_time) {
       return NextResponse.json(
@@ -74,6 +74,7 @@ export async function POST(req: NextRequest) {
       longitude: '',
       gps_accuracy: '',
       source: 'ADMIN',
+      duty_status: (['READY', 'BERTUGAS', 'MAINTENANCE'].includes(duty_status) ? duty_status : 'BERTUGAS') as Attendance['duty_status'],
       notes: notes || 'Absensi Ditambahkan oleh Admin',
       created_at: nowIso,
       updated_at: nowIso,

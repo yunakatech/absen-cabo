@@ -1,4 +1,5 @@
 export type Role = 'DRIVER' | 'SUPERVISOR' | 'ADMIN';
+export type DutyStatus = 'READY' | 'BERTUGAS' | 'MAINTENANCE';
 export type UserStatus = 'ACTIVE' | 'INACTIVE';
 export type LeaveType = 'SAKIT' | 'URUSAN_KELUARGA' | 'IZIN' | 'LAINNYA';
 export type LeaveStatus = 'PENDING' | 'APPROVED' | 'REJECTED';
@@ -28,6 +29,7 @@ export interface Attendance {
   longitude: string;
   gps_accuracy: string;
   source: AttendanceSource;
+  duty_status?: DutyStatus; // READY | BERTUGAS | MAINTENANCE
   notes: string;
   created_at: string;
   updated_at: string;

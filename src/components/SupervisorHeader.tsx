@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { LayoutDashboard, FileCheck2, LogOut, KeyRound } from 'lucide-react';
+import { LayoutDashboard, FileCheck2, LogOut, KeyRound, Users } from 'lucide-react';
 import toast from 'react-hot-toast';
 import ChangePinModal from './ChangePinModal';
 
@@ -53,6 +53,18 @@ export default function SupervisorHeader({ userName = 'Supervisor' }: Props) {
             >
               <LayoutDashboard size={16} />
               <span>Dashboard</span>
+            </Link>
+
+            <Link
+              href="/supervisor/absensi"
+              className={`flex items-center gap-2 px-3 py-2 rounded-xl text-xs sm:text-sm font-medium transition ${
+                pathname === '/supervisor/absensi'
+                  ? 'bg-blue-600/30 text-blue-300 border border-blue-500/40'
+                  : 'text-slate-300 hover:bg-slate-800'
+              }`}
+            >
+              <Users size={16} />
+              <span>Data Absensi</span>
             </Link>
 
             <Link

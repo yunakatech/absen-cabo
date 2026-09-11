@@ -18,6 +18,7 @@ interface AttendanceRecord {
   supervisor_name?: string;
   attendance_date: string;
   attendance_time: string;
+  duty_status?: string;
   status: string;
   source: string;
   created_by?: string;
@@ -83,6 +84,7 @@ export default function AdminAttendancePage() {
     driver_id: '',
     attendance_date: todayStr,
     attendance_time: '08:00:00',
+    duty_status: 'BERTUGAS',
     status: 'HADIR',
     notes: 'Input Manual oleh Admin',
   });
@@ -172,6 +174,7 @@ export default function AdminAttendancePage() {
       driver_id: drivers[0]?.id || '',
       attendance_date: filterDate || todayStr,
       attendance_time: '08:00:00',
+      duty_status: 'BERTUGAS',
       status: 'HADIR',
       notes: 'Input Manual oleh Admin',
     });
@@ -184,6 +187,7 @@ export default function AdminAttendancePage() {
       driver_id: item.driver_id,
       attendance_date: item.attendance_date,
       attendance_time: item.attendance_time,
+      duty_status: item.duty_status || 'BERTUGAS',
       status: item.status,
       notes: 'Diubah oleh Admin',
     });
@@ -225,6 +229,7 @@ export default function AdminAttendancePage() {
         body: JSON.stringify({
           attendance_date: formData.attendance_date,
           attendance_time: formData.attendance_time,
+          duty_status: formData.duty_status,
           status: formData.status,
           notes: formData.notes,
         }),
@@ -271,7 +276,7 @@ export default function AdminAttendancePage() {
       toast.error('Tidak ada data HADIR untuk diexport');
       return;
     }
-    const headers = ['No','Tanggal','Waktu (WITA)','Nama Driver','Supervisor','Status','Sumber','Latitude','Longitude','Google Maps'];
+    const headers = ['No','Tanggal','Waktu (WITA)','Nama Driver','Supervisor','Status Tugas','Status Absen','Sumber','Latitude','Longitude','Google Maps'];
     const rows = exportRows.map((r, i) => {
       const a = r.attendance!;
       const gmaps = a.latitude && a.longitude ? `https://www.google.com/maps?q=${a.latitude},${a.longitude}` : '-';
@@ -281,7 +286,8 @@ export default function AdminAttendancePage() {
           : r.driver.supervisor_id
           ? supervisorMap.get(r.driver.supervisor_id) || '-'
           : '-';
-      return [i+1, a.attendance_date, a.attendance_time, `"${a.driver_name}"`, `"${supName}"`, a.status, a.source, a.latitude||'-', a.longitude||'-', `"${gmaps}"`];
+      const duty = a.duty_status || 'BERTUGAS';
+      return [i+1, a.attendance_date, a.attendance_time, `"${a.driver_name}"`, `"${supName}"`, `"${duty}"`, a.status, a.source, a.latitude||'-', a.longitude||'-', `"${gmaps}"`];
     });
     const csv = '\uFEFF' + [headers.join(','), ...rows.map((r) => r.join(','))].join('\n');
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
@@ -411,6 +417,7 @@ export default function AdminAttendancePage() {
                 <th className="px-6 py-4">Status</th>
                 <th className="px-6 py-4">Nama Driver</th>
                 <th className="px-6 py-4">Tanggal &amp; Waktu (WITA)</th>
+                <th className="px-6 py-4">Status Tugas</th>
                 <th className="px-6 py-4">Supervisor</th>
                 <th className="px-6 py-4">Sumber / Keterangan</th>
                 <th className="px-6 py-4">Lokasi GPS</th>
@@ -468,6 +475,14 @@ export default function AdminAttendancePage() {
                               Pukul {a.attendance_time.substring(0, 5)} WITA
                             </p>
                           </>
+                        ) : (
+                          <span className="text-slate-500 text-xs">—</span>
+                        )}
+                      </td>
+                      {/* Status Tugas */}
+                      <td className="px-6 py-4">
+                        {a ? (
+                          <StatusBadge type="duty_status" value={a.duty_status || 'BERTUGAS'} />
                         ) : (
                           <span className="text-slate-500 text-xs">—</span>
                         )}
@@ -534,6 +549,7 @@ export default function AdminAttendancePage() {
                                 driver_id: row.driver.id,
                                 attendance_date: filterDate || todayStr,
                                 attendance_time: '08:00:00',
+                                duty_status: 'BERTUGAS',
                                 status: 'HADIR',
                                 notes: 'Input Manual oleh Admin',
                               });
@@ -615,6 +631,21 @@ export default function AdminAttendancePage() {
                   className="w-full px-4 py-2.5 bg-slate-800 border border-slate-700 rounded-xl text-white text-sm font-mono"
                   required
                 />
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">
+                  Status Tugas
+                </label>
+                <select
+                  value={formData.duty_status}
+                  onChange={(e) => setFormData({ ...formData, duty_status: e.target.value })}
+                  className="w-full px-4 py-2.5 bg-slate-800 border border-slate-700 rounded-xl text-white text-sm"
+                >
+                  <option value="READY">🟢 Ready (Siap Dipanggil)</option>
+                  <option value="BERTUGAS">🔵 Bertugas (Sedang Layanan)</option>
+                  <option value="MAINTENANCE">🟡 Maintenance (Armada Bengkel)</option>
+                </select>
               </div>
 
               <div>

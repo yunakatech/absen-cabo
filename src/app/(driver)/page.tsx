@@ -11,8 +11,10 @@ import {
   History,
   MapPin,
   RefreshCw,
+  Wrench,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { DutyStatus } from '@/lib/types';
 
 interface UserProfile {
   id: string;
@@ -46,6 +48,7 @@ interface AttendanceRecord {
   id: string;
   attendance_time: string;
   attendance_date: string;
+  duty_status?: DutyStatus;
 }
 
 interface LeaveRecord {
@@ -55,12 +58,40 @@ interface LeaveRecord {
   end_date: string;
 }
 
+const DUTY_STATUS_OPTIONS: { value: DutyStatus; label: string; desc: string; emoji: string; active: string; inactive: string }[] = [
+  {
+    value: 'READY',
+    label: 'Ready',
+    desc: 'Siap dipanggil',
+    emoji: '🟢',
+    active: 'border-emerald-500 bg-emerald-500/20 text-emerald-300',
+    inactive: 'border-slate-700 bg-slate-800/60 text-slate-400 hover:border-emerald-700 hover:bg-emerald-900/20',
+  },
+  {
+    value: 'BERTUGAS',
+    label: 'Bertugas',
+    desc: 'Sedang melayani',
+    emoji: '🔵',
+    active: 'border-blue-500 bg-blue-500/20 text-blue-300',
+    inactive: 'border-slate-700 bg-slate-800/60 text-slate-400 hover:border-blue-700 hover:bg-blue-900/20',
+  },
+  {
+    value: 'MAINTENANCE',
+    label: 'Maintenance',
+    desc: 'Armada di bengkel',
+    emoji: '🟡',
+    active: 'border-amber-500 bg-amber-500/20 text-amber-300',
+    inactive: 'border-slate-700 bg-slate-800/60 text-slate-400 hover:border-amber-700 hover:bg-amber-900/20',
+  },
+];
+
 export default function DriverHomePage() {
   const [user, setUser] = useState<UserProfile | null>(null);
   const [serverTime, setServerTime] = useState<ServerTime | null>(null);
   const [settings, setSettings] = useState<Settings | null>(null);
   const [todayAttendance, setTodayAttendance] = useState<AttendanceRecord | null>(null);
   const [approvedLeave, setApprovedLeave] = useState<LeaveRecord | null>(null);
+  const [dutyStatus, setDutyStatus] = useState<DutyStatus>('BERTUGAS');
 
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
@@ -68,7 +99,6 @@ export default function DriverHomePage() {
   const fetchData = useCallback(async () => {
     try {
       setLoading(true);
-      // Fetch me, time, settings, attendance, leave in parallel
       const [resMe, resTime, resSettings, resAtt, resLeave] = await Promise.all([
         fetch('/api/auth/me').then((r) => r.json()),
         fetch('/api/time').then((r) => r.json()),
@@ -81,7 +111,6 @@ export default function DriverHomePage() {
       if (resTime?.success) setServerTime(resTime.time);
       if (resSettings?.success) setSettings(resSettings.settings);
 
-      // Check today's attendance safely
       if (resAtt?.success && Array.isArray(resAtt.attendance) && resTime?.success) {
         const attToday = resAtt.attendance.find(
           (a: AttendanceRecord) => a.attendance_date === resTime.time.dateStr
@@ -89,7 +118,6 @@ export default function DriverHomePage() {
         setTodayAttendance(attToday || null);
       }
 
-      // Check today's approved leave safely
       if (resLeave?.success && Array.isArray(resLeave.requests) && resTime?.success) {
         const leaveToday = resLeave.requests.find(
           (l: LeaveRecord) =>
@@ -110,12 +138,10 @@ export default function DriverHomePage() {
     fetchData();
   }, [fetchData]);
 
-  // Handle ABSEN submission
   const handleAbsen = async () => {
     setSubmitting(true);
     let coords = { latitude: '', longitude: '', accuracy: '' };
 
-    // Get browser location if available
     if ('geolocation' in navigator) {
       try {
         const pos = await new Promise<GeolocationPosition>((resolve, reject) => {
@@ -142,6 +168,7 @@ export default function DriverHomePage() {
           latitude: coords.latitude,
           longitude: coords.longitude,
           gps_accuracy: coords.accuracy,
+          duty_status: dutyStatus,
         }),
       });
 
@@ -179,7 +206,6 @@ export default function DriverHomePage() {
   const endTime = rawEnd.substring(0, 5);
   const currentHHMM = serverTime?.hhmm || '00:00';
 
-  // Check if today is a work day based on settings
   let isTodayWorkDay = true;
   if (settings && serverTime) {
     const d = serverTime.dayOfWeek;
@@ -192,29 +218,21 @@ export default function DriverHomePage() {
     if (d === 0 && settings.sunday_enabled !== true) isTodayWorkDay = false;
   }
 
-  // Determine state 1 to 7
-  let stateNum = 2; // Default OPEN
+  let stateNum = 2;
+  if (todayAttendance) stateNum = 3;
+  else if (approvedLeave) stateNum = 6;
+  else if (settings && !settings.attendance_enabled) stateNum = 5;
+  else if (!isTodayWorkDay) stateNum = 7;
+  else if (currentHHMM < startTime) stateNum = 1;
+  else if (currentHHMM > endTime) stateNum = 4;
 
-  if (todayAttendance) {
-    stateNum = 3; // STATE 3 — Sudah Absen
-  } else if (approvedLeave) {
-    stateNum = 6; // STATE 6 — Izin Disetujui
-  } else if (settings && !settings.attendance_enabled) {
-    stateNum = 5; // STATE 5 — Absensi Dinonaktifkan Admin
-  } else if (!isTodayWorkDay) {
-    stateNum = 7; // STATE 7 — Libur Operasional
-  } else if (currentHHMM < startTime) {
-    stateNum = 1; // STATE 1 — Belum Waktu Absen
-  } else if (currentHHMM > endTime) {
-    stateNum = 4; // STATE 4 — Waktu Sudah Berakhir
-  }
-
-  // Greeting based on time
   const hour = parseInt(currentHHMM.substring(0, 2), 10);
   let greeting = 'Selamat Pagi';
   if (hour >= 11 && hour < 15) greeting = 'Selamat Siang';
   else if (hour >= 15 && hour < 18) greeting = 'Selamat Sore';
   else if (hour >= 18 || hour < 5) greeting = 'Selamat Malam';
+
+  const dutyLabel = DUTY_STATUS_OPTIONS.find((s) => s.value === (todayAttendance?.duty_status || 'BERTUGAS'));
 
   return (
     <div className="flex-1 flex flex-col justify-between space-y-6">
@@ -257,6 +275,12 @@ export default function DriverHomePage() {
             <div className="inline-flex items-center gap-2 px-5 py-2 bg-orange-950/60 border border-orange-800/60 rounded-2xl text-2xl font-extrabold text-orange-300 tracking-wider">
               <Clock size={22} className="text-orange-400" />
               <span>{todayAttendance?.attendance_time.substring(0, 5) || serverTime?.hhmm}</span>
+            </div>
+            {/* Show duty status */}
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-xl border text-xs font-bold mt-2
+              bg-slate-800/80 border-slate-700 text-slate-300">
+              <span>{dutyLabel?.emoji}</span>
+              <span>{dutyLabel?.label || todayAttendance?.duty_status}</span>
             </div>
             <p className="text-xs text-slate-400">
               Terima kasih! Absensi Anda telah berhasil dicatat.
@@ -320,7 +344,7 @@ export default function DriverHomePage() {
 
         {/* STATE 2 — ABSENSI AKTIF (BISA ABSEN) */}
         {stateNum === 2 && (
-          <div className="space-y-6 py-2">
+          <div className="space-y-5 py-2">
             <div>
               <p className="text-sm font-semibold text-slate-300 mb-1">Anda belum absen hari ini</p>
               <p className="text-xs text-slate-400 flex items-center justify-center gap-1">
@@ -329,11 +353,32 @@ export default function DriverHomePage() {
               </p>
             </div>
 
-            {/* BIG GREEN ABSEN BUTTON */}
+            {/* Duty Status Selector */}
+            <div>
+              <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Status Saat Ini</p>
+              <div className="grid grid-cols-3 gap-2">
+                {DUTY_STATUS_OPTIONS.map((opt) => (
+                  <button
+                    key={opt.value}
+                    type="button"
+                    onClick={() => setDutyStatus(opt.value)}
+                    className={`flex flex-col items-center gap-1 px-2 py-3 rounded-2xl border text-xs font-bold transition-all ${
+                      dutyStatus === opt.value ? opt.active : opt.inactive
+                    }`}
+                  >
+                    <span className="text-xl">{opt.emoji}</span>
+                    <span>{opt.label}</span>
+                    <span className="text-[10px] font-normal opacity-70">{opt.desc}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* ABSEN BUTTON */}
             <button
               onClick={handleAbsen}
               disabled={submitting}
-              className="w-full py-7 bg-gradient-to-r from-orange-500 via-orange-500 to-orange-600 hover:from-orange-400 hover:to-orange-400 text-white font-black rounded-3xl shadow-2xl shadow-orange-500/40 flex flex-col items-center justify-center gap-2 transform active:scale-95 transition-all disabled:opacity-50"
+              className="w-full py-6 bg-gradient-to-r from-orange-500 via-orange-500 to-orange-600 hover:from-orange-400 hover:to-orange-400 text-white font-black rounded-3xl shadow-2xl shadow-orange-500/40 flex flex-col items-center justify-center gap-2 transform active:scale-95 transition-all disabled:opacity-50"
             >
               {submitting ? (
                 <span className="flex items-center gap-2 text-xl">
@@ -345,10 +390,11 @@ export default function DriverHomePage() {
                 </span>
               ) : (
                 <>
-                  <div className="w-12 h-12 rounded-full bg-white/20 flex items-center justify-center text-white text-2xl shadow-inner">
-                    🟢
-                  </div>
                   <span className="text-2xl sm:text-3xl tracking-wider">ABSEN SEKARANG</span>
+                  <span className="text-xs font-normal opacity-80">
+                    Status: {DUTY_STATUS_OPTIONS.find((s) => s.value === dutyStatus)?.emoji}{' '}
+                    {DUTY_STATUS_OPTIONS.find((s) => s.value === dutyStatus)?.label}
+                  </span>
                 </>
               )}
             </button>
@@ -356,9 +402,8 @@ export default function DriverHomePage() {
         )}
       </div>
 
-      {/* Action Buttons Section (Always Accessible) */}
+      {/* Action Buttons Section */}
       <div className="grid grid-cols-2 gap-3 pt-2">
-        {/* AJUKAN IZIN Button */}
         <Link
           href="/izin"
           className="py-4 px-4 bg-gradient-to-r from-amber-500/20 to-amber-600/20 hover:from-amber-500/30 hover:to-amber-600/30 border border-amber-500/40 rounded-2xl text-amber-300 font-bold flex items-center justify-center gap-2 text-sm shadow-md transition transform active:scale-95 text-center"
@@ -367,7 +412,6 @@ export default function DriverHomePage() {
           <span>AJUKAN IZIN</span>
         </Link>
 
-        {/* RIWAYAT Button */}
         <Link
           href="/riwayat"
           className="py-4 px-4 bg-gradient-to-r from-blue-500/20 to-indigo-600/20 hover:from-blue-500/30 hover:to-indigo-600/30 border border-blue-500/40 rounded-2xl text-blue-300 font-bold flex items-center justify-center gap-2 text-sm shadow-md transition transform active:scale-95 text-center"
