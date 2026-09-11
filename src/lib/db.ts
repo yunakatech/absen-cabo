@@ -438,7 +438,7 @@ export const db = {
       try {
         const res = await client.sheets.spreadsheets.values.get({
           spreadsheetId: client.spreadsheetId,
-          range: 'Attendance!A2:M',
+          range: 'Attendance!A2:N',
         });
         const rows = res.data.values || [];
         const records = rows.map((r) => ({
@@ -453,8 +453,9 @@ export const db = {
           gps_accuracy: r[8] || '',
           source: (r[9] || 'DRIVER') as Attendance['source'],
           notes: r[10] || '',
-          created_at: r[11] || '',
-          updated_at: r[12] || '',
+          duty_status: (r[11] || 'BERTUGAS') as Attendance['duty_status'],
+          created_at: r[12] || '',
+          updated_at: r[13] || '',
         }));
 
         if (memoryDbCache) {
@@ -501,12 +502,13 @@ export const db = {
           a.gps_accuracy,
           a.source,
           a.notes,
+          a.duty_status || 'BERTUGAS',
           a.created_at,
           a.updated_at,
         ]);
         await client.sheets.spreadsheets.values.update({
           spreadsheetId: client.spreadsheetId,
-          range: 'Attendance!A2:M',
+          range: 'Attendance!A2:N',
           valueInputOption: 'USER_ENTERED',
           requestBody: { values },
         });
@@ -542,17 +544,18 @@ export const db = {
           a.gps_accuracy,
           a.source,
           a.notes,
+          a.duty_status || 'BERTUGAS',
           a.created_at,
           a.updated_at,
         ]);
         await client.sheets.spreadsheets.values.clear({
           spreadsheetId: client.spreadsheetId,
-          range: 'Attendance!A2:M',
+          range: 'Attendance!A2:N',
         });
         if (values.length > 0) {
           await client.sheets.spreadsheets.values.update({
             spreadsheetId: client.spreadsheetId,
-            range: 'Attendance!A2:M',
+            range: 'Attendance!A2:N',
             valueInputOption: 'USER_ENTERED',
             requestBody: { values },
           });
