@@ -105,7 +105,7 @@ export default function AdminAttendancePage() {
       const attUrl = filterDate ? `/api/attendance?date=${filterDate}` : '/api/attendance';
       const [resAtt, resDr, resSup, resLeave] = await Promise.all([
         fetch(attUrl).then((r) => r.json()),
-        fetch('/api/users?role=DRIVER').then((r) => r.json()),
+        fetch('/api/users?role=DRIVER&status=ACTIVE').then((r) => r.json()),
         fetch('/api/users?role=SUPERVISOR').then((r) => r.json()),
         fetch('/api/leave').then((r) => r.json()),
       ]);
@@ -128,8 +128,11 @@ export default function AdminAttendancePage() {
   // Supervisor Lookup Map
   const supervisorMap = new Map(supervisors.map((s) => [s.id, s.name]));
 
-  /* ─── Synthetic driver status rows ─────────────────── */
-  const driverStatusRows: DriverStatusRow[] = drivers.map((driver) => {
+  /* ─── Driver status rows ─────────────────────────────── */
+  const activeDriverIds = new Set(drivers.map((d) => d.id));
+
+  // 1. Active drivers (HADIR, IZIN, or BELUM_ABSEN)
+  const activeDriverRows: DriverStatusRow[] = drivers.map((driver) => {
     const att = attendance.find((a) => a.driver_id === driver.id) || null;
 
     const leave = leaveRequests.find(
@@ -146,6 +149,23 @@ export default function AdminAttendancePage() {
 
     return { driverStatus, driver, attendance: att, leave };
   });
+
+  // 2. Historical attendance records for drivers who are currently inactive (HADIR only)
+  const inactiveAttendanceRows: DriverStatusRow[] = attendance
+    .filter((a) => !activeDriverIds.has(a.driver_id))
+    .map((a) => ({
+      driverStatus: 'HADIR' as StatusFilter,
+      driver: {
+        id: a.driver_id,
+        name: a.driver_name,
+        employee_code: '—',
+        supervisor_id: a.supervisor_id,
+      },
+      attendance: a,
+      leave: null,
+    }));
+
+  const driverStatusRows: DriverStatusRow[] = [...activeDriverRows, ...inactiveAttendanceRows];
 
   /* ─── Filtering ─────────────────────────────────────── */
   const filteredRows = driverStatusRows.filter((row) => {
