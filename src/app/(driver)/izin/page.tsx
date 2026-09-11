@@ -7,6 +7,7 @@ import { ArrowLeft, Send, Calendar, FileText, CheckCircle } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { LeaveType } from '@/lib/types';
 import DatePicker from '@/components/DatePicker';
+import { getTodayWITA, getTomorrowWITA } from '@/lib/time';
 
 export default function DriverLeavePage() {
   const router = useRouter();
@@ -19,30 +20,29 @@ export default function DriverLeavePage() {
   const [tomorrowStr, setTomorrowStr] = useState('');
 
   useEffect(() => {
-    // Get server date or current date
+    // Get server date or current WITA date
     fetch('/api/time')
       .then((r) => r.json())
       .then((d) => {
         if (d.success) {
           const tDate = d.time.dateStr;
           setTodayStr(tDate);
-          const nextDay = new Date();
-          nextDay.setDate(nextDay.getDate() + 1);
-          setTomorrowStr(nextDay.toISOString().substring(0, 10));
+          setTomorrowStr(getTomorrowWITA());
           setCustomDate(tDate);
         }
       })
       .catch(() => {
-        const now = new Date().toISOString().substring(0, 10);
+        const now = getTodayWITA();
         setTodayStr(now);
+        setTomorrowStr(getTomorrowWITA());
         setCustomDate(now);
       });
   }, []);
 
   const getSelectedDate = (): string => {
-    if (dateOption === 'TODAY') return todayStr || new Date().toISOString().substring(0, 10);
-    if (dateOption === 'TOMORROW') return tomorrowStr || new Date().toISOString().substring(0, 10);
-    return customDate || todayStr;
+    if (dateOption === 'TODAY') return todayStr || getTodayWITA();
+    if (dateOption === 'TOMORROW') return tomorrowStr || getTomorrowWITA();
+    return customDate || todayStr || getTodayWITA();
   };
 
   const handleSubmit = async (e: React.FormEvent) => {

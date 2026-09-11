@@ -5,6 +5,33 @@
 export const TIMEZONE = 'Asia/Makassar';
 
 /**
+ * Returns YYYY-MM-DD string for today in Asia/Makassar (WITA)
+ */
+export function getTodayWITA(): string {
+  return new Intl.DateTimeFormat('en-CA', {
+    timeZone: TIMEZONE,
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  }).format(new Date());
+}
+
+/**
+ * Returns YYYY-MM-DD string for tomorrow in Asia/Makassar (WITA)
+ */
+export function getTomorrowWITA(): string {
+  const today = getTodayWITA();
+  const [y, m, d] = today.split('-').map(Number);
+  const date = new Date(Date.UTC(y, m - 1, d + 1, 12, 0, 0));
+  return new Intl.DateTimeFormat('en-CA', {
+    timeZone: TIMEZONE,
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  }).format(date);
+}
+
+/**
  * Returns current date & time formatted in Asia/Makassar timezone
  */
 export function getMakassarTime(): {

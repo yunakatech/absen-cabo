@@ -1,7 +1,8 @@
 'use client';
 
-import React from 'react';
+import React, { useRef } from 'react';
 import { Calendar, RotateCcw } from 'lucide-react';
+import { getTodayWITA } from '@/lib/time';
 
 interface DatePickerProps {
   label?: string;
@@ -14,27 +15,19 @@ interface DatePickerProps {
   className?: string;
 }
 
-function getTodayWITA(): string {
-  return new Intl.DateTimeFormat('en-CA', {
-    timeZone: 'Asia/Makassar',
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-  }).format(new Date());
-}
-
 function formatDisplayDate(dateStr: string): string {
   if (!dateStr) return '';
   try {
     const [y, m, d] = dateStr.split('-').map(Number);
     if (!y || !m || !d) return dateStr;
-    const date = new Date(y, m - 1, d);
-    return date.toLocaleDateString('id-ID', {
+    const date = new Date(Date.UTC(y, m - 1, d, 12, 0, 0));
+    return new Intl.DateTimeFormat('id-ID', {
+      timeZone: 'Asia/Makassar',
       weekday: 'short',
       day: 'numeric',
       month: 'short',
       year: 'numeric',
-    });
+    }).format(date);
   } catch {
     return dateStr;
   }
@@ -50,8 +43,24 @@ export default function DatePicker({
   min,
   className = '',
 }: DatePickerProps) {
+  const inputRef = useRef<HTMLInputElement>(null);
   const today = getTodayWITA();
   const isToday = value === today;
+
+  const triggerPicker = () => {
+    const el = inputRef.current;
+    if (el) {
+      try {
+        if (typeof el.showPicker === 'function') {
+          el.showPicker();
+        } else {
+          el.focus();
+        }
+      } catch {
+        el.focus();
+      }
+    }
+  };
 
   const handleReset = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -69,9 +78,12 @@ export default function DatePicker({
 
       <div className="flex items-center gap-2">
         {/* Custom Visual Box & Hidden Input Wrapper */}
-        <div className="relative flex-1 sm:flex-initial">
+        <div
+          onClick={triggerPicker}
+          className="relative flex-1 sm:flex-initial cursor-pointer group"
+        >
           {/* Custom Styled Visual Box */}
-          <div className="pointer-events-none relative z-10 flex items-center gap-2.5 px-3.5 py-2.5 bg-slate-800 border border-slate-700 rounded-xl text-white text-xs font-medium min-w-[180px] shadow-sm">
+          <div className="pointer-events-none relative z-10 flex items-center gap-2.5 px-3.5 py-2.5 bg-slate-800 border border-slate-700 group-hover:border-orange-500/60 group-hover:bg-slate-700/80 rounded-xl text-white text-xs font-medium min-w-[180px] shadow-sm transition-all">
             <Calendar size={14} className="text-orange-400 flex-shrink-0" />
             <span
               className={`flex-1 text-left select-none ${
@@ -95,6 +107,7 @@ export default function DatePicker({
 
           {/* Real Native HTML Date Input */}
           <input
+            ref={inputRef}
             type="date"
             value={value || ''}
             onChange={(e) => {
@@ -104,6 +117,14 @@ export default function DatePicker({
               } else {
                 onChange(val);
               }
+            }}
+            onClick={(e) => {
+              e.stopPropagation();
+              try {
+                if ('showPicker' in e.currentTarget) {
+                  e.currentTarget.showPicker();
+                }
+              } catch {}
             }}
             max={max}
             min={min}

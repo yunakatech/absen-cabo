@@ -7,7 +7,7 @@ import toast from 'react-hot-toast';
 import StatusBadge from '@/components/StatusBadge';
 import ConfirmModal from '@/components/ConfirmModal';
 import DatePicker from '@/components/DatePicker';
-import { formatIndonesianDate } from '@/lib/time';
+import { formatIndonesianDate, getTodayWITA } from '@/lib/time';
 
 /* ─── Types ──────────────────────────────────────────── */
 interface AttendanceRecord {
@@ -64,8 +64,8 @@ export default function AdminAttendancePage() {
   const [leaveRequests, setLeaveRequests] = useState<LeaveRequest[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // Today in YYYY-MM-DD for default date filter
-  const todayStr = new Date().toISOString().substring(0, 10);
+  // Today in YYYY-MM-DD (Asia/Makassar WITA) for default date filter
+  const todayStr = getTodayWITA();
 
   // Filters
   const [filterDate, setFilterDate] = useState(todayStr);
